@@ -1,3 +1,5 @@
+const Ball = require("Ball");
+
 /**
  * 玩家控制器
  */
@@ -5,9 +7,9 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    sprite: {
-      default: null,
-      type: cc.Sprite
+    hero: {
+      type: Ball,
+      default: null
     },
     // 移动速度
     speed: 100,
@@ -33,9 +35,10 @@ cc.Class({
     if (!this.running) {
       return;
     }
-    const delta = this.direction.mul(this.speed * dt);
-    const spriteNode = this.sprite.node;
-    spriteNode.position = spriteNode.position.add(delta);
+    const speed = this.hero.speed();
+    const delta = this.direction.mul(speed * dt);
+    const heroNode = this.hero.node;
+    heroNode.position = heroNode.position.add(delta);
   },
 
   onKeyDown(event) {

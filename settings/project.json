@@ -20,6 +20,12 @@
       true,
       false,
       false
+    ],
+    [
+      false,
+      false,
+      false,
+      false
     ]
   ],
   "design-resolution-height": 640,
@@ -30,7 +36,8 @@
   "group-list": [
     "ball",
     "food",
-    "wall"
+    "wall",
+    "ui"
   ],
   "simulator-orientation": false,
   "simulator-resolution": {

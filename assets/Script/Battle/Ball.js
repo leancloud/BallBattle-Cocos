@@ -1,3 +1,4 @@
+const Constants = require("Constants");
 /**
  * 球
  */
@@ -24,5 +25,16 @@ cc.Class({
     this.node.scale = cc.v2(newScale, newScale);
     // TODO 对象池
     other.node.destroy();
+  },
+
+  weight() {
+    cc.log(`weight: ${this.node}`);
+    const { width, height, scaleX, scaleY } = this.node;
+    return width * scaleX * height * scaleY;
+  },
+
+  speed() {
+    const speed = Constants.SpeedFactor / this.weight();
+    return Math.max(Constants.MinSpeed, speed);
   }
 });
