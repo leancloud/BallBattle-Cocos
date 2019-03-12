@@ -1,4 +1,5 @@
 const Ball = require("Ball");
+const Constants = require("../Constants");
 
 /**
  * 玩家控制器
@@ -38,7 +39,14 @@ cc.Class({
     const speed = this.hero.speed();
     const delta = this.direction.mul(speed * dt);
     const heroNode = this.hero.node;
-    heroNode.position = heroNode.position.add(delta);
+    const position = heroNode.position.add(delta);
+    const { x, y } = position;
+    const { LEFT, RIGHT, TOP, BOTTOM } = Constants;
+    const newPosition = cc.v2(
+      Math.min(Math.max(x, LEFT), RIGHT),
+      Math.min(Math.max(y, BOTTOM), TOP)
+    );
+    heroNode.position = newPosition;
   },
 
   onKeyDown(event) {

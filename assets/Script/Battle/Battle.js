@@ -22,8 +22,8 @@ cc.Class({
     setInterval(() => {
       const food = cc.instantiate(this.foodTemplate);
       this.node.addChild(food);
-      const x = Math.random() * 960 - 480;
-      const y = Math.random() * 640 - 320;
+      const x = Math.random() * 960 * 2 - 960;
+      const y = Math.random() * 640 * 2 - 640;
       food.position = cc.v2(x, y);
     }, 1000);
   }

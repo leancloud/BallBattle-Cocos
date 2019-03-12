@@ -21,14 +21,12 @@ cc.Class({
     const area = width * scaleX * height * scaleY;
     const newArea = area + 800;
     const newScale = Math.sqrt(newArea / (width * height));
-    cc.log(`new scale: ${newScale}`);
     this.node.scale = cc.v2(newScale, newScale);
     // TODO 对象池
     other.node.destroy();
   },
 
   weight() {
-    cc.log(`weight: ${this.node}`);
     const { width, height, scaleX, scaleY } = this.node;
     return width * scaleX * height * scaleY;
   },
