@@ -2,7 +2,6 @@ const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const Ball = require("./Ball");
 const PlayerController = require("./PlayerController");
-const CameraController = require("./CameraController");
 const UI = require("./UI");
 
 const { initClient, getClient } = LeanCloud;
@@ -21,10 +20,6 @@ cc.Class({
     },
     foodTemplate: {
       type: cc.Prefab,
-      default: null
-    },
-    sceneNode: {
-      type: cc.Node,
       default: null
     },
     uiNode: {
@@ -108,8 +103,9 @@ cc.Class({
       const playerCtrl = ball.node.addComponent(PlayerController);
       playerCtrl.hero = ball;
       // 设置摄像机跟随
-      const cameraCtrl = this.sceneCamera.addComponent(CameraController);
-      cameraCtrl.targetNode = ball.node;
+      const cameraNode = cc.find("Canvas/Main Camera");
+      cameraNode.removeFromParent();
+      ball.node.addChild(cameraNode);
       // 同步位置
       client.player.setCustomProperties({
         pos: { x: pos.x, y: pos.y }
@@ -122,7 +118,7 @@ cc.Class({
   newBall(userId, pos) {
     const ballNode = cc.instantiate(this.ballTemplate);
     ballNode.position = pos;
-    this.sceneNode.addChild(ballNode);
+    this.node.addChild(ballNode);
     const ball = ballNode.getComponent(Ball);
     ball.userId = userId;
     return ball;
