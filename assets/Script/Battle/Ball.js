@@ -5,25 +5,69 @@ const Constants = require("Constants");
 cc.Class({
   extends: cc.Component,
 
-  properties: {},
+  properties: {
+    nameLabel: {
+      type: cc.Label,
+      default: null
+    },
+    infoLabel: {
+      type: cc.Label,
+      default: null
+    },
+    userId: "",
+    player: null
+  },
 
   // LIFE-CYCLE CALLBACKS:
 
   // onLoad () {},
 
-  start() {},
+  start() {
+    this.nameLabel.string = this.userId;
+  },
 
-  // update (dt) {},
+  update(dt) {
+    // this.infoLabel.string = `w: ${parseInt(this.weight())}, s: ${parseInt(
+    //   this.speed()
+    // )}`;
+    const { x, y } = this.node;
+    this.infoLabel.string = `(${parseInt(x)}, ${parseInt(y)})`;
+    if (!this.player.isLocal()) {
+      // 如果不是当前客户端，则模拟运动
+      const move = this.player.CustomProperties.move;
+      if (move) {
+        // 模拟计算当前应该所处位置
+        const now = Date.now();
+        let delta = now - move.t;
+        const start = cc.v2(move.p.x, move.p.y);
+        let direction = cc.v2(move.d.x, move.d.y).normalize();
+        const end = start.add(direction.mul(this.speed() * delta));
+        // 计算当前位置到「应该位置」的方向
+        const { x, y } = this.node.position;
+        const curPos = cc.v2(x, y);
+        // 计算出校正后的方向
+        direction = end.sub(curPos).normalize();
+        // 计算出校正后的方向偏移
+        delta = direction.mul(this.speed() * dt);
+        const newPosition = curPos.add(delta);
+        const mag = end.sub(newPosition).mag();
+        if (mag < Constants.DISTANCE_MAG) {
+          return;
+        }
+        this.node.position = newPosition;
+      }
+    }
+  },
 
   // 物理
   onCollisionEnter(other, self) {
-    const { width, height, scaleX, scaleY } = this.node;
-    const area = width * scaleX * height * scaleY;
-    const newArea = area + 800;
-    const newScale = Math.sqrt(newArea / (width * height));
-    this.node.scale = cc.v2(newScale, newScale);
-    // TODO 对象池
-    other.node.destroy();
+    // const { width, height, scaleX, scaleY } = this.node;
+    // const area = width * scaleX * height * scaleY;
+    // const newArea = area + 800;
+    // const newScale = Math.sqrt(newArea / (width * height));
+    // this.node.scale = cc.v2(newScale, newScale);
+    // // TODO 对象池
+    // other.node.destroy();
   },
 
   weight() {

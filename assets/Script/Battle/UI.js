@@ -22,9 +22,5 @@ cc.Class({
 
   start() {},
 
-  update(dt) {
-    this.infoLabel.string = `Weight: ${parseInt(
-      this.hero.weight()
-    )}, Speed: ${parseInt(this.hero.speed())}`;
-  }
+  update(dt) {}
 });
