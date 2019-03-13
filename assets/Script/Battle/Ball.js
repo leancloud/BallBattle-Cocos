@@ -45,15 +45,17 @@ cc.Class({
         // 计算当前位置到「应该位置」的方向
         const { x, y } = this.node.position;
         const curPos = cc.v2(x, y);
+        const mag = end.sub(curPos).mag();
+        if (mag < Constants.DISTANCE_MAG) {
+          // 如果目标位置和当前位置在允许误差内，则不再移动
+          return;
+        }
         // 计算出校正后的方向
         direction = end.sub(curPos).normalize();
         // 计算出校正后的方向偏移
         delta = direction.mul(this.speed() * dt);
+        // 计算当前新的位置
         const newPosition = curPos.add(delta);
-        const mag = end.sub(newPosition).mag();
-        if (mag < Constants.DISTANCE_MAG) {
-          return;
-        }
         this.node.position = newPosition;
       }
     }
