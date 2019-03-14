@@ -1,6 +1,7 @@
 const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const Ball = require("./Ball");
+const Food = require("./Food");
 const PlayerController = require("./PlayerController");
 const UI = require("./UI");
 
@@ -32,6 +33,9 @@ cc.Class({
     },
     _idToBalls: {
       default: {}
+    },
+    _idToFoods: {
+      default: {}
     }
   },
 
@@ -45,43 +49,11 @@ cc.Class({
   },
 
   async start() {
-    // 生成食物
-    // setInterval(() => {
-    //   const food = cc.instantiate(this.foodTemplate);
-    //   this.node.addChild(food);
-    //   const x = Math.random() * 960 * 2 - 960;
-    //   const y = Math.random() * 640 * 2 - 640;
-    //   food.position = cc.v2(x, y);
-    // }, 1000);
     const userId = `${parseInt(Math.random() * 1000000)}`;
     initClient(userId);
     const client = getClient();
-    client.on(Event.PLAYER_ROOM_JOINED, ({ newPlayer }) => {
-      // 生成其他玩家
-      console.log(`${newPlayer.userId} joined room`);
-      const ball = this.newBall(newPlayer.userId, cc.v2(100000, 100000));
-      ball.player = newPlayer;
-      this._idToBalls[newPlayer.userId] = ball;
-    });
-    client.on(
-      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
-      ({ player, changedProps }) => {
-        console.log(
-          `${player.userId} changed props: ${JSON.stringify(changedProps)}`
-        );
-        if (changedProps.pos) {
-          if (!player.isLocal()) {
-            const ball = this._idToBalls[player.userId];
-            const { x, y } = changedProps.pos;
-            ball.node.position = cc.v2(x, y);
-          }
-        } else if (changedProps.move) {
-          if (!player.isLocal()) {
-            const ball = this._idToBalls[player.userId];
-          }
-        }
-      }
-    );
+    this.initPlayEvent();
+
     try {
       await client.connect();
       cc.log("connect done");
@@ -95,6 +67,32 @@ cc.Class({
           this._idToBalls[player.userId] = ball;
         }
       });
+      // 判断自己是否是 Master，来确定是否需要生成食物
+      if (client.player.isMaster()) {
+        const roomFoods = [];
+        // 只生成数据
+        let { roomFoodId } = client.room.CustomProperties;
+        if (!roomFoodId) {
+          roomFoodId = 0;
+        }
+        // 暂定初始生成 100 个食物
+        for (let i = 0; i < Constants.INIT_FOOD_COUNT; i++) {
+          const id = roomFoodId + i;
+          const { x, y } = this.randomPos();
+          roomFoods.push({ id, x, y });
+        }
+        roomFoodId += Constants.INIT_FOOD_COUNT;
+        // 此时可能导致消息很大
+        client.room.setCustomProperties({
+          roomFoodId,
+          roomFoods
+        });
+      } else {
+        const { roomFoods } = client.room.CustomProperties;
+        if (roomFoods) {
+          this.spawnFoods(roomFoods);
+        }
+      }
       // 随机生成一个位置
       const pos = this.randomPos();
       // 生成英雄
@@ -115,6 +113,22 @@ cc.Class({
     }
   },
 
+  initPlayEvent() {
+    const client = getClient();
+    client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
+    client.on(
+      Event.ROOM_CUSTOM_PROPERTIES_CHANGED,
+      this.onRoomPropertiesChanged,
+      this
+    );
+    client.on(
+      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
+      this.onPlayerPropertiesChanged,
+      this
+    );
+    client.on(Event.CUSTOM_EVENT, this.onReceiveCustomEvent, this);
+  },
+
   newBall(userId, pos) {
     const ballNode = cc.instantiate(this.ballTemplate);
     ballNode.position = pos;
@@ -124,9 +138,65 @@ cc.Class({
     return ball;
   },
 
+  spawnFoods(roomFoods) {
+    cc.log(`spawn ${roomFoods.length} foods`);
+    if (roomFoods) {
+      roomFoods.forEach(roomFood => {
+        const { id, x, y } = roomFood;
+        const foodNode = cc.instantiate(this.foodTemplate);
+        foodNode.position = cc.v2(x, y);
+        this.node.addChild(foodNode);
+        const food = foodNode.getComponent(Food);
+        food.id = id;
+      });
+    }
+  },
+
   randomPos() {
     const x = parseInt(Constants.LEFT + Math.random() * Constants.WIDTH);
     const y = parseInt(Constants.BOTTOM + Math.random() * Constants.HEIGHT);
     return cc.v2(x, y);
+  },
+
+  // Event
+  onPlayerRoomJoined({ newPlayer }) {
+    // 生成其他玩家
+    console.log(`${newPlayer.userId} joined room`);
+    const ball = this.newBall(newPlayer.userId, cc.v2(100000, 100000));
+    ball.player = newPlayer;
+    this._idToBalls[newPlayer.userId] = ball;
+  },
+
+  onRoomPropertiesChanged({ changedProps }) {
+    console.log(`room changed props: ${JSON.stringify(changedProps)}`);
+    const { roomFoods } = changedProps;
+    if (roomFoods) {
+      this.spawnFoods(roomFoods);
+    }
+  },
+
+  onPlayerPropertiesChanged({ player, changedProps }) {
+    console.log(
+      `player ${player.userId} changed props: ${JSON.stringify(changedProps)}`
+    );
+    const { pos, move } = changedProps;
+    if (pos) {
+      if (!player.isLocal()) {
+        const ball = this._idToBalls[player.userId];
+        const { x, y } = pos;
+        ball.node.position = cc.v2(x, y);
+      }
+    } else if (move) {
+      if (!player.isLocal()) {
+        // 模拟移动
+      }
+    }
+  },
+
+  onReceiveCustomEvent({ eventId, eventData }) {
+    if (eventId === Constants.EAT_EVENT) {
+      const { bId, fId } = eventData;
+      cc.log(`${bId} eat food: ${fId}`);
+    }
   }
 });

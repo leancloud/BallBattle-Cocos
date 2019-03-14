@@ -17,7 +17,7 @@ cc.Class({
     },
     // 移动速度
     speed: 100,
-    direction: cc.v2(1, 0),
+    direction: cc.Vec2.ZERO,
     running: false
   },
 

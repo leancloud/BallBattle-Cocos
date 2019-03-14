@@ -1,4 +1,10 @@
 const Constants = require("Constants");
+const LeanCloud = require("../LeanCloud");
+const Food = require("./Food");
+
+const { getClient } = LeanCloud;
+const { ReceiverGroup } = Play;
+
 /**
  * 球
  */
@@ -63,6 +69,20 @@ cc.Class({
 
   // 物理
   onCollisionEnter(other, self) {
+    if (other.node.group === Constants.FOOD_GROUP) {
+      const { node: foodNode } = other;
+      const food = foodNode.getComponent(Food);
+      const client = getClient();
+      if (client.player.isMaster()) {
+        const options = {
+          receiverGroup: ReceiverGroup.All
+        };
+        const bId = this.userId;
+        const fId = food.id;
+        client.sendEvent(Constants.EAT_EVENT, { bId, fId }, options);
+      }
+      foodNode.active = false;
+    }
     // const { width, height, scaleX, scaleY } = this.node;
     // const area = width * scaleX * height * scaleY;
     // const newArea = area + 800;
