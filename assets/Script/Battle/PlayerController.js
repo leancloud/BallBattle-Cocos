@@ -39,7 +39,7 @@ cc.Class({
     if (!this.running) {
       return;
     }
-    const speed = this.hero.speed();
+    const speed = this.hero.getSpeed();
     const delta = this.direction.normalize().mul(speed * dt);
     const heroNode = this.hero.node;
     const position = heroNode.position.add(delta);

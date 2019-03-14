@@ -14,26 +14,40 @@ const INIT_FOOD_COUNT = 100;
 const BALL_GROUP = "ball";
 const FOOD_GROUP = "food";
 
-// 自定义事件
-const EAT_EVENT = "EAT_EVENT";
-
+// 初始尺寸
+const BORN_SIZE = 48;
 // 速度因子，实际速度 = 速度因子 / 体重
-const SpeedFactor = 300000;
-// 最小速度
-const MinSpeed = 30;
+const SPEED_FACTOR = 300000;
+// 最小速率
+const MIN_SPEED = 30;
+// 食物重量
+const FOOD_WEIGHT = 100;
+
+// 自定义事件
+// 出生事件
+const BORN_EVENT = "BORN_EVENT";
+// 吃食物
+const EAT_EVENT = "EAT_EVENT";
 
 module.exports = {
   WIDTH,
   HEIGHT,
+
   LEFT,
   RIGHT,
   TOP,
   BOTTOM,
   DISTANCE_MAG,
   INIT_FOOD_COUNT,
+
   BALL_GROUP,
   FOOD_GROUP,
-  EAT_EVENT,
-  SpeedFactor,
-  MinSpeed
+
+  BORN_SIZE,
+  SPEED_FACTOR,
+  MIN_SPEED,
+  FOOD_WEIGHT,
+
+  BORN_EVENT,
+  EAT_EVENT
 };

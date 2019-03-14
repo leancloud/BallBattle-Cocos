@@ -23552,7 +23552,7 @@
 	});
 	var client_1 = client.Request;
 
-	var version = "0.18.0-alpha.6";
+	var version = "0.18.0-alpha.7";
 	var protocolVersion = 0;
 
 	// SDK 版本号
@@ -23867,14 +23867,17 @@
 	  return options;
 	}
 
-	/* eslint class-methods-use-this: ["error", { "exceptMethods": ["_getPingDuration", "_handleMessage", "_handleErrorMsg", "_handleUnknownMsg"] }] */var
+	/* eslint class-methods-use-this: ["error", { "exceptMethods": ["_getPingDuration", "_handleNotification", "_handleErrorMsg", "_handleUnknownMsg"] }] */var
 	Connection = function (_EventEmitter) {_inherits(Connection, _EventEmitter);
 	  function Connection() {_classCallCheck(this, Connection);var _this = _possibleConstructorReturn(this, (Connection.__proto__ || _Object$getPrototypeOf(Connection)).call(this));
 
 	    _this._requests = {};
 	    _this._msgId = 0;
 	    _this._pingTimer = null;
-	    _this._pongTimer = null;return _this;
+	    _this._pongTimer = null;
+	    // 消息处理及缓存
+	    _this._isMessageQueueRunning = false;
+	    _this._messageQueue = null;return _this;
 	  }_createClass(Connection, [{ key: 'connect', value: function connect(
 
 	    server, userId) {var _this2 = this;
@@ -23899,6 +23902,9 @@
 	    } }, { key: '_connected', value: function _connected()
 
 	    {var _this3 = this;
+	      // 每次连接成功后将会得到最新快照，之前的缓存没有意义了
+	      this._isMessageQueueRunning = true;
+	      this._messageQueue = [];
 	      this._ws.onmessage = function (message) {
 	        _this3._stopPong();
 	        _this3._pongTimer = setTimeout(function () {
@@ -23907,23 +23913,11 @@
 	          }, _this3._getPingDuration());
 	        }, _this3._getPingDuration() * MAX_NO_PONG_TIMES);
 	        var msg = JSON.parse(message.data);
-	        debug(_this3._userId + ' : ' + _this3._flag + ' <- ' + msg.op + ' ' + message.data);var
-	        i = msg.i;
-	        if (!lodash.isNull(i) && _this3._requests[i]) {
-	          // 如果有对应 resolve，则返回
-	          var _requests$i = _this3._requests[i],resolve = _requests$i.resolve,reject = _requests$i.reject;
-	          if (msg.cmd === 'error') {
-	            _this3._handleErrorMsg(msg);var
-	            reasonCode = msg.reasonCode,detail = msg.detail;
-	            reject(new PlayError(reasonCode, detail));
-	          } else {
-	            resolve(msg);
-	          }
-	        } else if (lodash.isEmpty(msg)) {
-	          debug('pong');
-	        } else {
-	          // 通知类消息交由子类处理事件
+	        debug(_this3._userId + ' : ' + _this3._flag + ' <- ' + msg.op + ' ' + message.data);
+	        if (_this3._isMessageQueueRunning) {
 	          _this3._handleMessage(msg);
+	        } else {
+	          _this3._messageQueue.push(msg);
 	        }
 	      };
 	      this._ws.onclose = function () {
@@ -24026,9 +24020,29 @@
 
 	    {
 	      throw new Error('must implement the method');
+	    } }, { key: '_handleMessage', value: function _handleMessage(
+
+	    msg) {var
+	      i = msg.i;
+	      if (!lodash.isNull(i) && this._requests[i]) {
+	        // 如果有对应 resolve，则返回
+	        var _requests$i = this._requests[i],resolve = _requests$i.resolve,reject = _requests$i.reject;
+	        if (msg.cmd === 'error') {
+	          this._handleErrorMsg(msg);var
+	          reasonCode = msg.reasonCode,detail = msg.detail;
+	          reject(new PlayError(reasonCode, detail));
+	        } else {
+	          resolve(msg);
+	        }
+	      } else if (lodash.isEmpty(msg)) {
+	        debug('pong');
+	      } else {
+	        // 通知类消息交由子类处理事件
+	        this._handleNotification(msg);
+	      }
 	    }
 
-	    /* eslint no-unused-vars: ["error", { "args": "none" }] */ }, { key: '_handleMessage', value: function _handleMessage(
+	    /* eslint no-unused-vars: ["error", { "args": "none" }] */ }, { key: '_handleNotification', value: function _handleNotification(
 	    msg) {
 	      throw new Error('must implement the method');
 	    } }, { key: '_handleErrorMsg', value: function _handleErrorMsg(
@@ -24044,7 +24058,19 @@
 	    } }, { key: '_handleUnknownMsg', value: function _handleUnknownMsg(
 
 	    msg) {
-	      error('unknow msg: ' + _JSON$stringify(msg));
+	      error('unknown msg: ' + _JSON$stringify(msg));
+	    } }, { key: '_pauseMessageQueue', value: function _pauseMessageQueue()
+
+	    {
+	      this._isMessageQueueRunning = false;
+	    } }, { key: '_resumeMessageQueue', value: function _resumeMessageQueue()
+
+	    {
+	      this._isMessageQueueRunning = true;
+	      while (this._messageQueue.length > 0) {
+	        var msg = this._messageQueue.shift();
+	        this._handleMessage(msg);
+	      }
 	    } }]);return Connection;}(eventemitter3);
 
 	// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
@@ -24401,7 +24427,7 @@
 	    }
 
 	    // 处理被动通知消息
-	  }, { key: '_handleMessage', value: function _handleMessage(msg) {
+	  }, { key: '_handleNotification', value: function _handleNotification(msg) {
 	      switch (msg.cmd) {
 	        case 'lobby':
 	          switch (msg.op) {
@@ -24576,6 +24602,14 @@
 
 
 
+
+
+
+
+
+
+
+
 	    // 设置活跃状态
 	    value: function _setActive(active) {
 	      this.active = active;
@@ -24591,7 +24625,10 @@
 	                                                                         * 房间玩家 ID
 	                                                                         * @type {number}
 	                                                                         * @readonly
-	                                                                         */ }, { key: 'actorId', get: function get() {return this._actorId;} }, { key: 'CustomProperties', get: function get() {return this.properties;} }], [{ key: '_newFromJSONObject', value: function _newFromJSONObject(playerJSONObject) {var player = new Player();player._userId = playerJSONObject.pid;player._actorId = playerJSONObject.actorId;if (playerJSONObject.attr) {player.properties = playerJSONObject.attr;} else {player.properties = {};}return player;} }]);return Player;}();
+	                                                                         */ }, { key: 'actorId', get: function get() {return this._actorId;} }, { key: 'CustomProperties', get: function get() {return this.properties;} /**
+	                                                                                                                                                                                                                          * 获取自定义属性
+	                                                                                                                                                                                                                          * @return {Object}
+	                                                                                                                                                                                                                          */ }, { key: 'customProperties', get: function get() {return this.properties;} }], [{ key: '_newFromJSONObject', value: function _newFromJSONObject(playerJSONObject) {var player = new Player();player._userId = playerJSONObject.pid;player._actorId = playerJSONObject.actorId;if (playerJSONObject.attr) {player.properties = playerJSONObject.attr;} else {player.properties = {};}return player;} }]);return Player;}();
 
 	/**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                     * 房间类
@@ -24735,6 +24772,14 @@
 
 
 
+
+
+
+
+
+
+
+
 	    newPlayer) {
 	      if (!(newPlayer instanceof Player)) {
 	        throw new TypeError(newPlayer + ' is not a Player');
@@ -24776,7 +24821,10 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 邀请的好友 ID 列表
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {Array.<string>}
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @readonly
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                */ }, { key: 'expectedUserIds', get: function get() {return this._expectedUserIds;} }, { key: 'playerList', get: function get() {return _Object$values(this._players);} }, { key: 'CustomProperties', get: function get() {return this._properties;} }], [{ key: '_newFromJSONObject', /* eslint no-param-reassign: ["error", { "props": false }] */value: function _newFromJSONObject(roomJSONObject) {var room = new Room();room._name = roomJSONObject.cid;room._opened = roomJSONObject.open;room._visible = roomJSONObject.visible;room._maxPlayerCount = roomJSONObject.maxMembers;room._masterActorId = roomJSONObject.masterActorId;room._expectedUserIds = roomJSONObject.expectMembers;room._players = {};for (var i = 0; i < roomJSONObject.members.length; i += 1) {var playerDTO = roomJSONObject.members[i];var player = Player._newFromJSONObject(playerDTO);room._players[player.actorId] = player;}if (roomJSONObject.attr) {room._properties = roomJSONObject.attr;} else {room._properties = {};}return room;} }]);return Room;}();
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                */ }, { key: 'expectedUserIds', get: function get() {return this._expectedUserIds;} }, { key: 'playerList', get: function get() {return _Object$values(this._players);} }, { key: 'CustomProperties', get: function get() {return this._properties;} /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * 获取自定义属性
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @return {Object}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */ }, { key: 'customProperties', get: function get() {return this._properties;} }], [{ key: '_newFromJSONObject', /* eslint no-param-reassign: ["error", { "props": false }] */value: function _newFromJSONObject(roomJSONObject) {var room = new Room();room._name = roomJSONObject.cid;room._opened = roomJSONObject.open;room._visible = roomJSONObject.visible;room._maxPlayerCount = roomJSONObject.maxMembers;room._masterActorId = roomJSONObject.masterActorId;room._expectedUserIds = roomJSONObject.expectMembers;room._players = {};for (var i = 0; i < roomJSONObject.members.length; i += 1) {var playerDTO = roomJSONObject.members[i];var player = Player._newFromJSONObject(playerDTO);room._players[player.actorId] = player;}if (roomJSONObject.attr) {room._properties = roomJSONObject.attr;} else {room._properties = {};}return room;} }]);return Room;}();
 
 	var GAME_KEEPALIVE_DURATION = 7000;
 
@@ -24934,7 +24982,7 @@
 
 	    {
 	      return GAME_KEEPALIVE_DURATION;
-	    } }, { key: '_handleMessage', value: function _handleMessage(
+	    } }, { key: '_handleNotification', value: function _handleNotification(
 
 	    msg) {
 	      switch (msg.cmd) {
@@ -25403,6 +25451,14 @@
 
 	      },
 
+	      pauseMessageQueue: function pauseMessageQueue() {
+	        this._lobbyConn._pauseMessageQueue();
+	      },
+
+	      resumeMessageQueue: function resumeMessageQueue() {
+	        this._lobbyConn._resumeMessageQueue();
+	      },
+
 	      _simulateDisconnection: function _simulateDisconnection() {
 	        this._lobbyConn._simulateDisconnection();
 	      },
@@ -25651,6 +25707,14 @@
 
 	      },
 
+	      pauseMessageQueue: function pauseMessageQueue() {
+	        this._gameConn._pauseMessageQueue();
+	      },
+
+	      resumeMessageQueue: function resumeMessageQueue() {
+	        this._gameConn._pauseMessageQueue();
+	      },
+
 	      _simulateDisconnection: function _simulateDisconnection() {
 	        this._gameConn._simulateDisconnection();
 	      },
@@ -25874,10 +25938,7 @@
 	                _this20._primaryServer = primaryServer;
 	                _this20._secondaryServer = secondaryServer;
 	                // 与大厅服务器建立连接
-	                _context14.next = 12;return _this20._lobbyConn.connect(
-	                _this20._primaryServer,
-	                _this20._play._userId);case 12:_context14.next = 17;break;case 14:_context14.prev = 14;_context14.t0 = _context14['catch'](0);
-
+	                _context14.next = 12;return _this20._lobbyConn.connect(_this20._primaryServer, _this20._play._userId);case 12:_context14.next = 17;break;case 14:_context14.prev = 14;_context14.t0 = _context14['catch'](0);
 
 	                reject(_context14.t0);case 17:
 
@@ -25902,10 +25963,7 @@
 
 
 	                gameServer = addr || secureAddr;_context15.next = 4;return (
-	                  _this21._gameConn.connect(
-	                  gameServer,
-	                  _this21._play._userId));case 4:_context15.next = 9;break;case 6:_context15.prev = 6;_context15.t0 = _context15['catch'](0);
-
+	                  _this21._gameConn.connect(gameServer, _this21._play._userId));case 4:_context15.next = 9;break;case 6:_context15.prev = 6;_context15.t0 = _context15['catch'](0);
 
 	                reject(_context15.t0);case 9:_context15.prev = 9;_play3 =
 
@@ -26293,10 +26351,24 @@
 
 
 	    /**
-	                                                                                                                                                                                                                                 * 获取当前所在房间
-	                                                                                                                                                                                                                                 * @return {Room}
-	                                                                                                                                                                                                                                 * @readonly
-	                                                                                                                                                                                                                                 */ }, { key: '_setRoomCustomProperties',
+	                                                                                                                                                                                                                                 * 暂停消息队列处理
+	                                                                                                                                                                                                                                 */ }, { key: 'pauseMessageQueue', value: function pauseMessageQueue()
+	    {
+	      this._fsm.handle('pauseMessageQueue');
+	    }
+
+	    /**
+	       * 恢复消息队列处理
+	       */ }, { key: 'resumeMessageQueue', value: function resumeMessageQueue()
+	    {
+	      this._fsm.handle('resumeMessageQueue');
+	    }
+
+	    /**
+	       * 获取当前所在房间
+	       * @return {Room}
+	       * @readonly
+	       */ }, { key: '_setRoomCustomProperties',
 
 
 
