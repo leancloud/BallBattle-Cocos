@@ -1,12 +1,13 @@
 const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const Ball = require("./Ball");
-const Food = require("./Food");
 const PlayerController = require("./PlayerController");
 const UI = require("./UI");
+const FoodSpawner = require("./FoodSpawner");
+const { randomPos } = require("./BattleHelper");
 
 const { initClient, getClient } = LeanCloud;
-const { Event, ReceiverGroup } = Play;
+const { Event } = Play;
 
 /**
  * 战斗控制类
@@ -19,8 +20,8 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    foodTemplate: {
-      type: cc.Prefab,
+    foodSpawner: {
+      type: FoodSpawner,
       default: null
     },
     uiNode: {
@@ -53,6 +54,7 @@ cc.Class({
     initClient(userId);
     const client = getClient();
     this.initPlayEvent();
+    this.foodSpawner.initPlay();
 
     try {
       await client.connect();
@@ -67,30 +69,10 @@ cc.Class({
       // 判断自己是否是 Master，来确定是否需要生成食物
       if (client.player.isMaster) {
         cc.log("I am master");
-        const roomFoods = [];
-        // 只生成数据
-        let { roomFoodId } = client.room.customProperties;
-        if (!roomFoodId) {
-          roomFoodId = 0;
-        }
-        // 暂定初始生成 100 个食物
-        for (let i = 0; i < Constants.INIT_FOOD_COUNT; i++) {
-          const id = roomFoodId + i;
-          const { x, y } = this.randomPos();
-          roomFoods.push({ id, x, y });
-        }
-        roomFoodId += Constants.INIT_FOOD_COUNT;
-        // 此时可能导致消息很大
-        client.room.setCustomProperties({
-          roomFoodId,
-          roomFoods
-        });
+        this.foodSpawner.spawnFoodsData(Constants.INIT_FOOD_COUNT);
         this.bornPlayer(client.player);
       } else {
-        const { roomFoods } = client.room.customProperties;
-        if (roomFoods) {
-          this.spawnFoods(roomFoods);
-        }
+        this.foodSpawner.spawnFoodNodes();
       }
     } catch (err) {
       cc.log(err);
@@ -100,11 +82,6 @@ cc.Class({
   initPlayEvent() {
     const client = getClient();
     client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
-    client.on(
-      Event.ROOM_CUSTOM_PROPERTIES_CHANGED,
-      this.onRoomPropertiesChanged,
-      this
-    );
     client.on(
       Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
       this.onPlayerPropertiesChanged,
@@ -120,7 +97,7 @@ cc.Class({
     // 根据体重得到速率
     const speed = Constants.SPEED_FACTOR / weight;
     // 生成随机位置
-    const pos = this.randomPos();
+    const pos = randomPos();
     cc.log(`born pos: ${pos}`);
     player.setCustomProperties({ weight, speed, pos });
     // 通知玩家出生
@@ -139,26 +116,6 @@ cc.Class({
     return ball;
   },
 
-  spawnFoods(roomFoods) {
-    cc.log(`spawn ${roomFoods.length} foods`);
-    if (roomFoods) {
-      roomFoods.forEach(roomFood => {
-        const { id, x, y } = roomFood;
-        const foodNode = cc.instantiate(this.foodTemplate);
-        foodNode.position = cc.v2(x, y);
-        this.node.addChild(foodNode);
-        const food = foodNode.getComponent(Food);
-        food.id = id;
-      });
-    }
-  },
-
-  randomPos() {
-    const x = parseInt(Constants.LEFT + Math.random() * Constants.WIDTH);
-    const y = parseInt(Constants.BOTTOM + Math.random() * Constants.HEIGHT);
-    return cc.v2(x, y);
-  },
-
   // Event
   onPlayerRoomJoined({ newPlayer }) {
     // 生成其他玩家
@@ -166,14 +123,6 @@ cc.Class({
     const client = getClient();
     if (client.player.isMaster) {
       this.bornPlayer(newPlayer);
-    }
-  },
-
-  onRoomPropertiesChanged({ changedProps }) {
-    console.log(`room changed props: ${JSON.stringify(changedProps)}`);
-    const { roomFoods } = changedProps;
-    if (roomFoods) {
-      this.spawnFoods(roomFoods);
     }
   },
 
