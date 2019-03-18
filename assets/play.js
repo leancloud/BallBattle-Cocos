@@ -23552,7 +23552,7 @@
 	});
 	var client_1 = client.Request;
 
-	var version = "0.18.0-alpha.7";
+	var version = "0.18.0-beta.0";
 	var protocolVersion = 0;
 
 	// SDK 版本号
@@ -24154,7 +24154,7 @@
 
 	  /**
 	     * 房间名称
-	     * @type {string}
+	     * @type {String}
 	     * @readonly
 	     */_createClass(LobbyRoom, [{ key: "roomName", get: function get()
 	    {
@@ -24163,7 +24163,7 @@
 
 	    /**
 	       * 房间最大玩家数
-	       * @type {number}
+	       * @type {Number}
 	       * @readonly
 	       */ }, { key: "maxPlayerCount", get: function get()
 	    {
@@ -24172,7 +24172,7 @@
 
 	    /**
 	       * 邀请好友 ID 数组
-	       * @type {Array.<string>}
+	       * @type {Array.<String>}
 	       * @readonly
 	       */ }, { key: "expectedUserIds", get: function get()
 	    {
@@ -24181,7 +24181,7 @@
 
 	    /**
 	       * 房间置空后销毁时间（秒）
-	       * @type {number}
+	       * @type {Number}
 	       * @readonly
 	       */ }, { key: "emptyRoomTtl", get: function get()
 	    {
@@ -24190,7 +24190,7 @@
 
 	    /**
 	       * 玩家离线后踢出房间时间（秒）
-	       * @type {number}
+	       * @type {Number}
 	       * @readonly
 	       */ }, { key: "playerTtl", get: function get()
 	    {
@@ -24199,7 +24199,7 @@
 
 	    /**
 	       * 当前房间玩家数量
-	       * @type {number}
+	       * @type {Number}
 	       * @readonly
 	       */ }, { key: "playerCount", get: function get()
 	    {
@@ -24513,7 +24513,36 @@
 	  function Player() {_classCallCheck(this, Player);
 	    this._userId = '';
 	    this._actorId = -1;
-	  }_createClass(Player, [{ key: 'isLocal',
+	  }_createClass(Player, [{ key: 'setCustomProperties',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -24546,37 +24575,11 @@
 
 
 	    /**
-	                                            * 判断是不是当前客户端玩家
-	                                            * @return {Boolean}
-	                                            */value: function isLocal()
-	    {
-	      return (
-	        this._actorId !== -1 && this._play._player._actorId === this._actorId);
-
-	    }
-
-	    /**
-	       * 判断是不是主机玩家
-	       * @return {Boolean}
-	       */ }, { key: 'isMaster', value: function isMaster()
-	    {
-	      return this._actorId !== -1 && this._play._room.masterId === this._actorId;
-	    }
-
-	    /**
-	       * 判断是不是活跃状态
-	       * @return {Boolean}
-	       */ }, { key: 'isActive', value: function isActive()
-	    {
-	      return this.active;
-	    }
-
-	    /**
-	       * 设置玩家的自定义属性
-	       * @param {Object} properties 自定义属性
-	       * @param {Object} [opts] 设置选项
-	       * @param {Object} [opts.expectedValues] 期望属性，用于 CAS 检测
-	       */ }, { key: 'setCustomProperties', value: function () {var _ref = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(
+	                                                        * 设置玩家的自定义属性
+	                                                        * @param {Object} properties 自定义属性
+	                                                        * @param {Object} [opts] 设置选项
+	                                                        * @param {Object} [opts.expectedValues] 期望属性，用于 CAS 检测
+	                                                        */value: function () {var _ref = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(
 	      properties) {var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},_ref2$expectedValues = _ref2.expectedValues,expectedValues = _ref2$expectedValues === undefined ? null : _ref2$expectedValues;return regenerator.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:return _context.abrupt('return',
 	                this._play._setPlayerCustomProperties(
 	                this._actorId,
@@ -24586,26 +24589,10 @@
 
 
 	    /**
-	                                                                                                                                                                                                         * @deprecated
 	                                                                                                                                                                                                         * 获取自定义属性
-	                                                                                                                                                                                                         * @return {Object}
-	                                                                                                                                                                                                         */ }, { key: 'getCustomProperties', value: function getCustomProperties()
-	    {
-	      return this.properties;
-	    }
-
-	    /**
-	       * 获取自定义属性
-	       * @return {Object}
-	       */ }, { key: '_setActive',
-
-
-
-
-
-
-
-
+	                                                                                                                                                                                                         * @type {Object}
+	                                                                                                                                                                                                         * @readonly
+	                                                                                                                                                                                                         */ }, { key: '_setActive',
 
 
 
@@ -24619,21 +24606,50 @@
 	      this.properties = _Object$assign(this.properties, changedProperties);
 	    } }, { key: 'userId', /**
 	                           * 玩家 ID
-	                           * @type {string}
+	                           * @type {String}
 	                           * @readonly
 	                           */get: function get() {return this._userId;} /**
 	                                                                         * 房间玩家 ID
-	                                                                         * @type {number}
+	                                                                         * @type {Number}
 	                                                                         * @readonly
-	                                                                         */ }, { key: 'actorId', get: function get() {return this._actorId;} }, { key: 'CustomProperties', get: function get() {return this.properties;} /**
-	                                                                                                                                                                                                                          * 获取自定义属性
-	                                                                                                                                                                                                                          * @return {Object}
-	                                                                                                                                                                                                                          */ }, { key: 'customProperties', get: function get() {return this.properties;} }], [{ key: '_newFromJSONObject', value: function _newFromJSONObject(playerJSONObject) {var player = new Player();player._userId = playerJSONObject.pid;player._actorId = playerJSONObject.actorId;if (playerJSONObject.attr) {player.properties = playerJSONObject.attr;} else {player.properties = {};}return player;} }]);return Player;}();
+	                                                                         */ }, { key: 'actorId', get: function get() {return this._actorId;} /**
+	                                                                                                                                              * 判断是不是当前客户端玩家
+	                                                                                                                                              * @type {Boolean}
+	                                                                                                                                              * @readonly
+	                                                                                                                                              */ }, { key: 'isLocal', get: function get() {return this._actorId !== -1 && this._play._player._actorId === this._actorId;} /**
+	                                                                                                                                                                                                                                                                           * 判断是不是主机玩家
+	                                                                                                                                                                                                                                                                           * @type {Boolean}
+	                                                                                                                                                                                                                                                                           * @readonly
+	                                                                                                                                                                                                                                                                           */ }, { key: 'isMaster', get: function get() {return this._actorId !== -1 && this._play._room.masterId === this._actorId;} /**
+	                                                                                                                                                                                                                                                                                                                                                                                                       * 判断是不是活跃状态
+	                                                                                                                                                                                                                                                                                                                                                                                                       * @type {Boolean}
+	                                                                                                                                                                                                                                                                                                                                                                                                       * @readonly
+	                                                                                                                                                                                                                                                                                                                                                                                                       */ }, { key: 'isActive', get: function get() {return this.active;} }, { key: 'customProperties', get: function get() {return this.properties;} }], [{ key: '_newFromJSONObject', value: function _newFromJSONObject(playerJSONObject) {var player = new Player();player._userId = playerJSONObject.pid;player._actorId = playerJSONObject.actorId;if (playerJSONObject.attr) {player.properties = playerJSONObject.attr;} else {player.properties = {};}return player;} }]);return Player;}();
 
 	/**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                     * 房间类
-	                                                                                                                                                                                                                                                                                                                                                                                                                                     */var
+	 * 接收组枚举
+	 * @readonly
+	 * @enum {Number}
+	 */
+	var ReceiverGroup = {
+	  /**
+	                       * 其他人（除了自己之外的所有人）
+	                       */
+	  Others: 0,
+	  /**
+	              * 所有人（包括自己）
+	              */
+	  All: 1,
+	  /**
+	           * 主机客户端
+	           */
+	  MasterClient: 2 };
+
+	/**
+	                                              * 房间类
+	                                              */var
 	Room = function () {function Room() {_classCallCheck(this, Room);}_createClass(Room, [{ key: 'getPlayer',
+
 
 
 
@@ -24721,7 +24737,7 @@
 
 	    /**
 	                                                                                                           * 根据 actorId 获取 Player 对象
-	                                                                                                           * @param {number} actorId 玩家在房间中的 Id
+	                                                                                                           * @param {Number} actorId 玩家在房间中的 Id
 	                                                                                                           * @return {Player}
 	                                                                                                           */value: function getPlayer(
 	    actorId) {
@@ -24738,7 +24754,7 @@
 
 	    /**
 	       * 获取房间内的玩家列表
-	       * @return {Array.<Player>}
+	       * @type {Array.<Player>}
 	       * @readonly
 	       */ }, { key: 'setCustomProperties',
 
@@ -24756,28 +24772,70 @@
 
 
 	    /**
-	                                                                                                                                                                                                                                                         * @deprecated
 	                                                                                                                                                                                                                                                         * 获取自定义属性
-	                                                                                                                                                                                                                                                         * @return {Object}
-	                                                                                                                                                                                                                                                         */ }, { key: 'getCustomProperties', value: function getCustomProperties()
-	    {
-	      return this._properties;
-	    }
+	                                                                                                                                                                                                                                                         * @type {Object}
+	                                                                                                                                                                                                                                                         * @readonly
+	                                                                                                                                                                                                                                                         */ }, { key: 'leave',
+
+
+
 
 	    /**
-	       * 获取自定义属性
-	       * @return {Object}
-	       */ }, { key: '_addPlayer', value: function _addPlayer(
+	                                                                                                                                                                                                                                                                                * 离开房间
+	                                                                                                                                                                                                                                                                                */value: function () {var _ref3 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {return regenerator.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:return _context2.abrupt('return',
+
+	                this._play.leaveRoom());case 1:case 'end':return _context2.stop();}}}, _callee2, this);}));function leave() {return _ref3.apply(this, arguments);}return leave;}()
 
 
+	    /**
+	                                                                                                                                                                                    * 踢人
+	                                                                                                                                                                                    * @param {Number} actorId 踢用户的 actorId
+	                                                                                                                                                                                    * @param {Object} [opts] 附带参数
+	                                                                                                                                                                                    * @param {Number} [opts.code] 编码
+	                                                                                                                                                                                    * @param {String} [opts.msg] 附带信息
+	                                                                                                                                                                                    */ }, { key: 'kickPlayer', value: function () {var _ref4 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(
+	      actorId) {var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},_ref5$code = _ref5.code,code = _ref5$code === undefined ? null : _ref5$code,_ref5$msg = _ref5.msg,msg = _ref5$msg === undefined ? null : _ref5$msg;return regenerator.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:return _context3.abrupt('return',
+	                this._play.kickPlayer(actorId, { code: code, msg: msg }));case 1:case 'end':return _context3.stop();}}}, _callee3, this);}));function kickPlayer(_x4) {return _ref4.apply(this, arguments);}return kickPlayer;}()
 
 
+	    /**
+	                                                                                                                                                                                                                                   * 设置房间开启 / 关闭
+	                                                                                                                                                                                                                                   * @param {Boolean} opened 是否开启
+	                                                                                                                                                                                                                                   */ }, { key: 'setOpened', value: function () {var _ref6 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(
+	      opened) {return regenerator.wrap(function _callee4$(_context4) {while (1) {switch (_context4.prev = _context4.next) {case 0:return _context4.abrupt('return',
+	                this._play.setRoomOpened(opened));case 1:case 'end':return _context4.stop();}}}, _callee4, this);}));function setOpened(_x5) {return _ref6.apply(this, arguments);}return setOpened;}()
 
 
+	    /**
+	                                                                                                                                                                                                         * 设置房间可见 / 不可见
+	                                                                                                                                                                                                         * @param {Boolean} visible 是否可见
+	                                                                                                                                                                                                         */ }, { key: 'setVisible', value: function () {var _ref7 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(
+	      visible) {return regenerator.wrap(function _callee5$(_context5) {while (1) {switch (_context5.prev = _context5.next) {case 0:return _context5.abrupt('return',
+	                this._play.setRoomVisible(visible));case 1:case 'end':return _context5.stop();}}}, _callee5, this);}));function setVisible(_x6) {return _ref7.apply(this, arguments);}return setVisible;}()
 
 
+	    /**
+	                                                                                                                                                                                                             * 设置房主
+	                                                                                                                                                                                                             * @param {Number} newMasterId 新房主 ID
+	                                                                                                                                                                                                             */ }, { key: 'setMaster', value: function () {var _ref8 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(
+	      newMasterId) {return regenerator.wrap(function _callee6$(_context6) {while (1) {switch (_context6.prev = _context6.next) {case 0:return _context6.abrupt('return',
+	                this._play.setMaster(newMasterId));case 1:case 'end':return _context6.stop();}}}, _callee6, this);}));function setMaster(_x7) {return _ref8.apply(this, arguments);}return setMaster;}()
 
 
+	    /**
+	                                                                                                                                                                                                          * 发送自定义消息
+	                                                                                                                                                                                                          * @param {Number|String} eventId 事件 ID
+	                                                                                                                                                                                                          * @param {Object} eventData 事件参数
+	                                                                                                                                                                                                          * @param {Object} options 发送事件选项
+	                                                                                                                                                                                                          * @param {ReceiverGroup} options.receiverGroup 接收组
+	                                                                                                                                                                                                          * @param {Array.<Number>} options.targetActorIds 接收者 Id。如果设置，将会覆盖 receiverGroup
+	                                                                                                                                                                                                          */ }, { key: 'sendEvent', value: function () {var _ref9 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(
+
+	      eventId) {var
+	        eventData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};var
+	        options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : { receiverGroup: ReceiverGroup.All };return regenerator.wrap(function _callee7$(_context7) {while (1) {switch (_context7.prev = _context7.next) {case 0:return _context7.abrupt('return',
+
+	                this._play.sendEvent(eventId, eventData, options));case 1:case 'end':return _context7.stop();}}}, _callee7, this);}));function sendEvent(_x10) {return _ref9.apply(this, arguments);}return sendEvent;}() }, { key: '_addPlayer', value: function _addPlayer(
 
 
 	    newPlayer) {
@@ -24796,35 +24854,33 @@
 	      this._properties = _Object$assign(this._properties, changedProperties);
 	    } }, { key: 'name', /**
 	                         * 房间名称
-	                         * @type {string}
+	                         * @type {String}
 	                         * @readonly
 	                         */get: function get() {return this._name;} /**
 	                                                                     * 房间是否开启
-	                                                                     * @type {boolean}
+	                                                                     * @type {Boolean}
 	                                                                     * @readonly
 	                                                                     */ }, { key: 'opened', get: function get() {return this._opened;} /**
 	                                                                                                                                        * 房间是否可见
-	                                                                                                                                        * @type {boolean}
+	                                                                                                                                        * @type {Boolean}
 	                                                                                                                                        * @readonly
 	                                                                                                                                        */ }, { key: 'visible', get: function get() {return this._visible;} /**
 	                                                                                                                                                                                                             * 房间允许的最大玩家数量
-	                                                                                                                                                                                                             * @type {number}
+	                                                                                                                                                                                                             * @type {Number}
 	                                                                                                                                                                                                             * @readonly
 	                                                                                                                                                                                                             */ }, { key: 'maxPlayerCount', get: function get() {return this._maxPlayerCount;} /**
 	                                                                                                                                                                                                                                                                                                * 获取房主
+	                                                                                                                                                                                                                                                                                                * @type {Player}
 	                                                                                                                                                                                                                                                                                                * @readonly
 	                                                                                                                                                                                                                                                                                                */ }, { key: 'master', get: function get() {return this.getPlayer(this.masterId);} /**
 	                                                                                                                                                                                                                                                                                                                                                                                    * 房间主机玩家 ID
-	                                                                                                                                                                                                                                                                                                                                                                                    * @type {number}
+	                                                                                                                                                                                                                                                                                                                                                                                    * @type {Number}
 	                                                                                                                                                                                                                                                                                                                                                                                    * @readonly
 	                                                                                                                                                                                                                                                                                                                                                                                    */ }, { key: 'masterId', get: function get() {return this._masterActorId;} /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * 邀请的好友 ID 列表
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {Array.<string>}
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {Array.<String>}
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @readonly
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                */ }, { key: 'expectedUserIds', get: function get() {return this._expectedUserIds;} }, { key: 'playerList', get: function get() {return _Object$values(this._players);} }, { key: 'CustomProperties', get: function get() {return this._properties;} /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * 获取自定义属性
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @return {Object}
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */ }, { key: 'customProperties', get: function get() {return this._properties;} }], [{ key: '_newFromJSONObject', /* eslint no-param-reassign: ["error", { "props": false }] */value: function _newFromJSONObject(roomJSONObject) {var room = new Room();room._name = roomJSONObject.cid;room._opened = roomJSONObject.open;room._visible = roomJSONObject.visible;room._maxPlayerCount = roomJSONObject.maxMembers;room._masterActorId = roomJSONObject.masterActorId;room._expectedUserIds = roomJSONObject.expectMembers;room._players = {};for (var i = 0; i < roomJSONObject.members.length; i += 1) {var playerDTO = roomJSONObject.members[i];var player = Player._newFromJSONObject(playerDTO);room._players[player.actorId] = player;}if (roomJSONObject.attr) {room._properties = roomJSONObject.attr;} else {room._properties = {};}return room;} }]);return Room;}();
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                */ }, { key: 'expectedUserIds', get: function get() {return this._expectedUserIds;} }, { key: 'playerList', get: function get() {return _Object$values(this._players);} }, { key: 'customProperties', get: function get() {return this._properties;} }], [{ key: '_newFromJSONObject', /* eslint no-param-reassign: ["error", { "props": false }] */value: function _newFromJSONObject(roomJSONObject) {var room = new Room();room._name = roomJSONObject.cid;room._opened = roomJSONObject.open;room._visible = roomJSONObject.visible;room._maxPlayerCount = roomJSONObject.maxMembers;room._masterActorId = roomJSONObject.masterActorId;room._expectedUserIds = roomJSONObject.expectMembers;room._players = {};for (var i = 0; i < roomJSONObject.members.length; i += 1) {var playerDTO = roomJSONObject.members[i];var player = Player._newFromJSONObject(playerDTO);room._players[player.actorId] = player;}if (roomJSONObject.attr) {room._properties = roomJSONObject.attr;} else {room._properties = {};}return room;} }]);return Room;}();
 
 	var GAME_KEEPALIVE_DURATION = 7000;
 
@@ -25098,7 +25154,7 @@
 	/**
 	 * 事件
 	 * @readonly
-	 * @enum {string}
+	 * @enum {String}
 	 */
 	var Event = {
 	  /**
@@ -25280,8 +25336,16 @@
 	              reject(err);
 	            } else {
 	              var body = JSON.parse(response.text);var
-	              ttl = body.ttl,playServer = body.play_server;
-	              _this._url = 'https://' + playServer + '/1/multiplayer/router/router';
+
+	              ttl =
+
+
+	              body.ttl,secondaryServer = body.play_server,primaryServer = body.multiplayer_router_server;
+	              var routerServer = primaryServer || secondaryServer;
+	              if (routerServer === undefined) {
+	                reject(new Error('router server is null'));
+	              }
+	              _this._url = 'https://' + routerServer + '/1/multiplayer/router/router';
 	              _this._serverValidTimestamp = Date.now() + ttl * 1000;
 	              debug('server valid timestamp: ' + _this._serverValidTimestamp);
 	              debug('get app router from server: ' + _this._url);
@@ -25320,8 +25384,6 @@
 	          insecure: _insecure,
 	          feature: _feature });
 
-	        this._lobbyConn = new LobbyConnection();
-	        this._gameConn = new GameConnection();
 	      },
 
 	      onTransition: function onTransition(nextState) {
@@ -25334,6 +25396,8 @@
 
 	      connect: function connect() {var _this = this;
 	        this.handle('onTransition', 'connecting');
+	        this._lobbyConn = new LobbyConnection();
+	        this._gameConn = new GameConnection();
 	        return this._connectLobby().then(
 	        tap(function () {return _this.handle('onTransition', 'lobby');}));
 
@@ -25379,11 +25443,11 @@
 	    lobby: {
 	      _onEnter: function _onEnter() {var _this2 = this;
 	        debug('lobby _onEnter()');
-	        this._lobbyConn.on(ERROR_EVENT, function () {var _ref2 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {var code = _ref.code,detail = _ref.detail;return regenerator.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:_context.next = 2;return (
-	                      _this2._lobbyConn.close());case 2:
+	        this._lobbyConn.on(ERROR_EVENT, function () {var _ref2 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {var code = _ref.code,detail = _ref.detail;return regenerator.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+	                    _this2._lobbyConn.close();
 	                    _this2._play.emit(Event.ERROR, {
 	                      code: code,
-	                      detail: detail });case 3:case 'end':return _context.stop();}}}, _callee, _this2);}));return function (_x) {return _ref2.apply(this, arguments);};}());
+	                      detail: detail });case 2:case 'end':return _context.stop();}}}, _callee, _this2);}));return function (_x) {return _ref2.apply(this, arguments);};}());
 
 
 	        this._lobbyConn.on(ROOM_LIST_UPDATED_EVENT, function (roomList) {
@@ -25440,14 +25504,14 @@
 	      },
 
 	      close: function close() {var _this3 = this;
-	        return new _Promise(function () {var _ref3 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(resolve, reject) {return regenerator.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:_context2.prev = 0;_context2.next = 3;return (
-
-	                      _this3._lobbyConn.close());case 3:
-	                    _this3.transition('close');
-	                    resolve();_context2.next = 10;break;case 7:_context2.prev = 7;_context2.t0 = _context2['catch'](0);
-
-	                    reject(_context2.t0);case 10:case 'end':return _context2.stop();}}}, _callee2, _this3, [[0, 7]]);}));return function (_x2, _x3) {return _ref3.apply(this, arguments);};}());
-
+	        return new _Promise(function () {var _ref3 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(resolve, reject) {return regenerator.wrap(function _callee2$(_context2) {while (1) {switch (_context2.prev = _context2.next) {case 0:
+	                    try {
+	                      _this3._lobbyConn.close();
+	                      _this3.transition('close');
+	                      resolve();
+	                    } catch (err) {
+	                      reject(err);
+	                    }case 1:case 'end':return _context2.stop();}}}, _callee2, _this3);}));return function (_x2, _x3) {return _ref3.apply(this, arguments);};}());
 
 	      },
 
@@ -25505,11 +25569,11 @@
 	        // 为 reconnectAndRejoin() 保存房间 id
 	        this._play._lastRoomId = this._play.room.name;
 	        // 注册事件
-	        this._gameConn.on(ERROR_EVENT, function () {var _ref5 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref4) {var code = _ref4.code,detail = _ref4.detail;return regenerator.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:_context3.next = 2;return (
-	                      _this4._gameConn.close());case 2:
+	        this._gameConn.on(ERROR_EVENT, function () {var _ref5 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref4) {var code = _ref4.code,detail = _ref4.detail;return regenerator.wrap(function _callee3$(_context3) {while (1) {switch (_context3.prev = _context3.next) {case 0:
+	                    _this4._gameConn.close();
 	                    _this4._play.emit(Event.ERROR, {
 	                      code: code,
-	                      detail: detail });case 3:case 'end':return _context3.stop();}}}, _callee3, _this4);}));return function (_x4) {return _ref5.apply(this, arguments);};}());
+	                      detail: detail });case 2:case 'end':return _context3.stop();}}}, _callee3, _this4);}));return function (_x4) {return _ref5.apply(this, arguments);};}());
 
 
 	        this._gameConn.on(PLAYER_JOINED_EVENT, function (newPlayer) {
@@ -25590,11 +25654,11 @@
 	          _this4.handle('onTransition', 'disconnect');
 	        });
 	        this._gameConn.on(ROOM_KICKED_EVENT, function () {var _ref6 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(code, msg) {return regenerator.wrap(function _callee4$(_context4) {while (1) {switch (_context4.prev = _context4.next) {case 0:
-	                    _this4.handle('onTransition', 'gameToLobby');_context4.next = 3;return (
-	                      _this4._gameConn.close());case 3:_context4.next = 5;return (
-	                      _this4._connectLobby());case 5:
+	                    _this4.handle('onTransition', 'gameToLobby');
+	                    _this4._gameConn.close();_context4.next = 4;return (
+	                      _this4._connectLobby());case 4:
 	                    _this4.handle('onTransition', 'lobby');
-	                    _this4._play.emit(Event.ROOM_KICKED, { code: code, msg: msg });case 7:case 'end':return _context4.stop();}}}, _callee4, _this4);}));return function (_x5, _x6) {return _ref6.apply(this, arguments);};}());
+	                    _this4._play.emit(Event.ROOM_KICKED, { code: code, msg: msg });case 6:case 'end':return _context4.stop();}}}, _callee4, _this4);}));return function (_x5, _x6) {return _ref6.apply(this, arguments);};}());
 
 	      },
 
@@ -25618,16 +25682,16 @@
 	        this.handle('onTransition', 'gameToLobby');
 	        return new _Promise(function () {var _ref7 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(resolve, reject) {return regenerator.wrap(function _callee5$(_context5) {while (1) {switch (_context5.prev = _context5.next) {case 0:_context5.prev = 0;_context5.next = 3;return (
 
-	                      _this5._gameConn.leaveRoom());case 3:_context5.next = 5;return (
-	                      _this5._gameConn.close());case 5:_context5.next = 7;return (
+	                      _this5._gameConn.leaveRoom());case 3:
+	                    _this5._gameConn.close();_context5.next = 6;return (
 	                      _this5._connectLobby().then(
 	                      tap(function () {
 	                        _this5.handle('onTransition', 'lobby');
-	                      })));case 7:
+	                      })));case 6:
 
-	                    resolve();_context5.next = 13;break;case 10:_context5.prev = 10;_context5.t0 = _context5['catch'](0);
+	                    resolve();_context5.next = 12;break;case 9:_context5.prev = 9;_context5.t0 = _context5['catch'](0);
 
-	                    reject(_context5.t0);case 13:case 'end':return _context5.stop();}}}, _callee5, _this5, [[0, 10]]);}));return function (_x7, _x8) {return _ref7.apply(this, arguments);};}());
+	                    reject(_context5.t0);case 12:case 'end':return _context5.stop();}}}, _callee5, _this5, [[0, 9]]);}));return function (_x7, _x8) {return _ref7.apply(this, arguments);};}());
 
 
 	      },
@@ -25696,14 +25760,14 @@
 	      },
 
 	      close: function close() {var _this12 = this;
-	        return new _Promise(function () {var _ref8 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(resolve, reject) {return regenerator.wrap(function _callee6$(_context6) {while (1) {switch (_context6.prev = _context6.next) {case 0:_context6.prev = 0;_context6.next = 3;return (
-
-	                      _this12._gameConn.close());case 3:
-	                    _this12.transition('close');
-	                    resolve();_context6.next = 10;break;case 7:_context6.prev = 7;_context6.t0 = _context6['catch'](0);
-
-	                    reject(_context6.t0);case 10:case 'end':return _context6.stop();}}}, _callee6, _this12, [[0, 7]]);}));return function (_x9, _x10) {return _ref8.apply(this, arguments);};}());
-
+	        return new _Promise(function () {var _ref8 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(resolve, reject) {return regenerator.wrap(function _callee6$(_context6) {while (1) {switch (_context6.prev = _context6.next) {case 0:
+	                    try {
+	                      _this12._gameConn.close();
+	                      _this12.transition('close');
+	                      resolve();
+	                    } catch (err) {
+	                      reject(err);
+	                    }case 1:case 'end':return _context6.stop();}}}, _callee6, _this12);}));return function (_x9, _x10) {return _ref8.apply(this, arguments);};}());
 
 	      },
 
@@ -25770,6 +25834,8 @@
 
 	      reconnect: function reconnect() {var _this13 = this;
 	        this.handle('onTransition', 'connecting');
+	        this._lobbyConn = new LobbyConnection();
+	        this._gameConn = new GameConnection();
 	        return this._connectLobby().then(
 	        tap(function () {return _this13.handle('onTransition', 'lobby');}));
 
@@ -25777,17 +25843,19 @@
 
 	      reconnectAndRejoin: function reconnectAndRejoin() {var _this14 = this;
 	        this.handle('onTransition', 'connecting');
-	        return new _Promise(function () {var _ref9 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(resolve, reject) {return regenerator.wrap(function _callee7$(_context7) {while (1) {switch (_context7.prev = _context7.next) {case 0:_context7.prev = 0;_context7.next = 3;return (
+	        this._lobbyConn = new LobbyConnection();
+	        this._gameConn = new GameConnection();
+	        return new _Promise(function () {var _ref9 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(resolve, reject) {var gameRoom;return regenerator.wrap(function _callee7$(_context7) {while (1) {switch (_context7.prev = _context7.next) {case 0:_context7.prev = 0;_context7.next = 3;return (
 
 	                      _this14._connectLobby().then(
 	                      tap(function () {
 	                        _this14.handle('onTransition', 'lobby');
 	                      })));case 3:_context7.next = 5;return (
 
-	                      _this14._joinRoom(_this14._play._lastRoomId));case 5:
-	                    resolve();_context7.next = 11;break;case 8:_context7.prev = 8;_context7.t0 = _context7['catch'](0);
+	                      _this14._joinRoom(_this14._play._lastRoomId));case 5:gameRoom = _context7.sent;
+	                    resolve(gameRoom);_context7.next = 12;break;case 9:_context7.prev = 9;_context7.t0 = _context7['catch'](0);
 
-	                    reject(_context7.t0);case 11:case 'end':return _context7.stop();}}}, _callee7, _this14, [[0, 8]]);}));return function (_x11, _x12) {return _ref9.apply(this, arguments);};}());
+	                    reject(_context7.t0);case 12:case 'end':return _context7.stop();}}}, _callee7, _this14, [[0, 9]]);}));return function (_x11, _x12) {return _ref9.apply(this, arguments);};}());
 
 
 	      },
@@ -25806,13 +25874,13 @@
 
 
 	    close: {
-	      onTransition: function () {var _ref10 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(nextState) {return regenerator.wrap(function _callee8$(_context8) {while (1) {switch (_context8.prev = _context8.next) {case 0:if (!(
-	                  nextState === 'lobby')) {_context8.next = 5;break;}_context8.next = 3;return (
-	                    this._lobbyConn.close());case 3:_context8.next = 8;break;case 5:if (!(
-	                  nextState === 'game')) {_context8.next = 8;break;}_context8.next = 8;return (
-	                    this._gameConn.close());case 8:case 'end':return _context8.stop();}}}, _callee8, this);}));function onTransition(_x13) {return _ref10.apply(this, arguments);}return onTransition;}(),
-
-
+	      onTransition: function onTransition(nextState) {
+	        if (nextState === 'lobby') {
+	          this._lobbyConn.close();
+	        } else if (nextState === 'game') {
+	          this._gameConn.close();
+	        }
+	      },
 
 	      '*': function _(evt) {var
 	        inputType = evt.inputType;
@@ -25826,195 +25894,208 @@
 
 	  _createRoom: function _createRoom(roomName, roomOptions, expectedUserIds) {var _this15 = this;
 	    this.handle('onTransition', 'lobbyToGame');
-	    return new _Promise(function () {var _ref11 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(resolve, reject) {var roomInfo, cid, addr, secureAddr;return regenerator.wrap(function _callee9$(_context9) {while (1) {switch (_context9.prev = _context9.next) {case 0:_context9.prev = 0;_context9.next = 3;return (
+	    return new _Promise(function () {var _ref10 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(resolve, reject) {var roomInfo, cid, addr, secureAddr, gameRoom;return regenerator.wrap(function _callee8$(_context8) {while (1) {switch (_context8.prev = _context8.next) {case 0:_context8.prev = 0;_context8.next = 3;return (
 
 	                  _this15._lobbyConn.createRoom(
 	                  roomName,
 	                  roomOptions,
-	                  expectedUserIds));case 3:roomInfo = _context9.sent;
+	                  expectedUserIds));case 3:roomInfo = _context8.sent;
 
-	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context9.next = 7;return (
-	                  _this15._connectGame(addr, secureAddr));case 7:_context9.next = 9;return (
-	                  _this15._createGameRoom(cid, roomOptions, expectedUserIds));case 9:
+	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context8.next = 7;return (
+	                  _this15._connectGame(addr, secureAddr));case 7:_context8.next = 9;return (
+	                  _this15._createGameRoom(
+	                  cid,
+	                  roomOptions,
+	                  expectedUserIds));case 9:gameRoom = _context8.sent;
+
 	                _this15.handle('onTransition', 'game');
-	                resolve();_context9.next = 17;break;case 13:_context9.prev = 13;_context9.t0 = _context9['catch'](0);
+	                resolve(gameRoom);_context8.next = 18;break;case 14:_context8.prev = 14;_context8.t0 = _context8['catch'](0);
 
 	                _this15.handle('onTransition', 'lobby');
-	                reject(_context9.t0);case 17:case 'end':return _context9.stop();}}}, _callee9, _this15, [[0, 13]]);}));return function (_x14, _x15) {return _ref11.apply(this, arguments);};}());
+	                reject(_context8.t0);case 18:case 'end':return _context8.stop();}}}, _callee8, _this15, [[0, 14]]);}));return function (_x13, _x14) {return _ref10.apply(this, arguments);};}());
 
 
 	  },
 
 	  _joinRoom: function _joinRoom(roomName, expectedUserIds) {var _this16 = this;
 	    this.handle('onTransition', 'lobbyToGame');
-	    return new _Promise(function () {var _ref12 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10(resolve, reject) {var roomInfo, cid, addr, secureAddr;return regenerator.wrap(function _callee10$(_context10) {while (1) {switch (_context10.prev = _context10.next) {case 0:_context10.prev = 0;_context10.next = 3;return (
+	    return new _Promise(function () {var _ref11 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(resolve, reject) {var roomInfo, cid, addr, secureAddr, gameRoom;return regenerator.wrap(function _callee9$(_context9) {while (1) {switch (_context9.prev = _context9.next) {case 0:_context9.prev = 0;_context9.next = 3;return (
 
 	                  _this16._lobbyConn.joinRoom(
 	                  roomName,
-	                  expectedUserIds));case 3:roomInfo = _context10.sent;
+	                  expectedUserIds));case 3:roomInfo = _context9.sent;
 
-	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context10.next = 7;return (
-	                  _this16._connectGame(addr, secureAddr));case 7:_context10.next = 9;return (
-	                  _this16._joinGameRoom(cid, expectedUserIds));case 9:
+	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context9.next = 7;return (
+	                  _this16._connectGame(addr, secureAddr));case 7:_context9.next = 9;return (
+	                  _this16._joinGameRoom(cid, expectedUserIds));case 9:gameRoom = _context9.sent;
 	                _this16.handle('onTransition', 'game');
-	                resolve();_context10.next = 17;break;case 13:_context10.prev = 13;_context10.t0 = _context10['catch'](0);
+	                resolve(gameRoom);_context9.next = 18;break;case 14:_context9.prev = 14;_context9.t0 = _context9['catch'](0);
 
 	                _this16.handle('onTransition', 'lobby');
-	                reject(_context10.t0);case 17:case 'end':return _context10.stop();}}}, _callee10, _this16, [[0, 13]]);}));return function (_x16, _x17) {return _ref12.apply(this, arguments);};}());
+	                reject(_context9.t0);case 18:case 'end':return _context9.stop();}}}, _callee9, _this16, [[0, 14]]);}));return function (_x15, _x16) {return _ref11.apply(this, arguments);};}());
 
 
 	  },
 
 	  _joinOrCreateRoom: function _joinOrCreateRoom(roomName, roomOptions, expectedUserIds) {var _this17 = this;
 	    this.handle('onTransition', 'lobbyToGame');
-	    return new _Promise(function () {var _ref13 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11(resolve, reject) {var roomInfo, op, cid, addr, secureAddr;return regenerator.wrap(function _callee11$(_context11) {while (1) {switch (_context11.prev = _context11.next) {case 0:_context11.prev = 0;_context11.next = 3;return (
+	    return new _Promise(function () {var _ref12 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10(resolve, reject) {var roomInfo, op, cid, addr, secureAddr, gameRoom;return regenerator.wrap(function _callee10$(_context10) {while (1) {switch (_context10.prev = _context10.next) {case 0:_context10.prev = 0;_context10.next = 3;return (
 
 	                  _this17._lobbyConn.joinOrCreateRoom(
 	                  roomName,
 	                  roomOptions,
-	                  expectedUserIds));case 3:roomInfo = _context11.sent;
+	                  expectedUserIds));case 3:roomInfo = _context10.sent;
 
-	                op = roomInfo.op, cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context11.next = 7;return (
-	                  _this17._connectGame(addr, secureAddr));case 7:if (!(
-	                op === 'started')) {_context11.next = 12;break;}_context11.next = 10;return (
-	                  _this17._createGameRoom(cid, roomOptions, expectedUserIds));case 10:_context11.next = 14;break;case 12:_context11.next = 14;return (
+	                op = roomInfo.op, cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context10.next = 7;return (
+	                  _this17._connectGame(addr, secureAddr));case 7:
+	                gameRoom = null;if (!(
+	                op === 'started')) {_context10.next = 14;break;}_context10.next = 11;return (
+	                  _this17._createGameRoom(
+	                  cid,
+	                  roomOptions,
+	                  expectedUserIds));case 11:gameRoom = _context10.sent;_context10.next = 17;break;case 14:_context10.next = 16;return (
 
-	                  _this17._joinGameRoom(cid, expectedUserIds));case 14:
+
+	                  _this17._joinGameRoom(cid, expectedUserIds));case 16:gameRoom = _context10.sent;case 17:
 
 	                _this17.handle('onTransition', 'game');
-	                resolve();_context11.next = 22;break;case 18:_context11.prev = 18;_context11.t0 = _context11['catch'](0);
+	                resolve(gameRoom);_context10.next = 25;break;case 21:_context10.prev = 21;_context10.t0 = _context10['catch'](0);
 
 	                _this17.handle('onTransition', 'lobby');
-	                reject(_context11.t0);case 22:case 'end':return _context11.stop();}}}, _callee11, _this17, [[0, 18]]);}));return function (_x18, _x19) {return _ref13.apply(this, arguments);};}());
+	                reject(_context10.t0);case 25:case 'end':return _context10.stop();}}}, _callee10, _this17, [[0, 21]]);}));return function (_x17, _x18) {return _ref12.apply(this, arguments);};}());
 
 
 	  },
 
 	  _joinRandomRoom: function _joinRandomRoom(matchProperties, expectedUserIds) {var _this18 = this;
 	    this.handle('onTransition', 'lobbyToGame');
-	    return new _Promise(function () {var _ref14 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12(resolve, reject) {var roomInfo, cid, addr, secureAddr;return regenerator.wrap(function _callee12$(_context12) {while (1) {switch (_context12.prev = _context12.next) {case 0:_context12.prev = 0;_context12.next = 3;return (
+	    return new _Promise(function () {var _ref13 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11(resolve, reject) {var roomInfo, cid, addr, secureAddr, gameRoom;return regenerator.wrap(function _callee11$(_context11) {while (1) {switch (_context11.prev = _context11.next) {case 0:_context11.prev = 0;_context11.next = 3;return (
 
 	                  _this18._lobbyConn.joinRandomRoom(
 	                  matchProperties,
-	                  expectedUserIds));case 3:roomInfo = _context12.sent;
+	                  expectedUserIds));case 3:roomInfo = _context11.sent;
 
-	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context12.next = 7;return (
-	                  _this18._connectGame(addr, secureAddr));case 7:_context12.next = 9;return (
-	                  _this18._joinGameRoom(cid, expectedUserIds, matchProperties));case 9:
+	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context11.next = 7;return (
+	                  _this18._connectGame(addr, secureAddr));case 7:_context11.next = 9;return (
+	                  _this18._joinGameRoom(
+	                  cid,
+	                  expectedUserIds,
+	                  matchProperties));case 9:gameRoom = _context11.sent;
+
 	                _this18.handle('onTransition', 'game');
-	                resolve();_context12.next = 17;break;case 13:_context12.prev = 13;_context12.t0 = _context12['catch'](0);
+	                resolve(gameRoom);_context11.next = 18;break;case 14:_context11.prev = 14;_context11.t0 = _context11['catch'](0);
 
 	                _this18.handle('onTransition', 'lobby');
-	                reject(_context12.t0);case 17:case 'end':return _context12.stop();}}}, _callee12, _this18, [[0, 13]]);}));return function (_x20, _x21) {return _ref14.apply(this, arguments);};}());
+	                reject(_context11.t0);case 18:case 'end':return _context11.stop();}}}, _callee11, _this18, [[0, 14]]);}));return function (_x19, _x20) {return _ref13.apply(this, arguments);};}());
 
 
 	  },
 
 	  _rejoinRoom: function _rejoinRoom(roomName) {var _this19 = this;
 	    this.handle('onTransition', 'lobbyToGame');
-	    return new _Promise(function () {var _ref15 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee13(resolve, reject) {var roomInfo, cid, addr, secureAddr;return regenerator.wrap(function _callee13$(_context13) {while (1) {switch (_context13.prev = _context13.next) {case 0:_context13.prev = 0;_context13.next = 3;return (
+	    return new _Promise(function () {var _ref14 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12(resolve, reject) {var roomInfo, cid, addr, secureAddr, gameRoom;return regenerator.wrap(function _callee12$(_context12) {while (1) {switch (_context12.prev = _context12.next) {case 0:_context12.prev = 0;_context12.next = 3;return (
 
-	                  _this19._lobbyConn.rejoinRoom(roomName));case 3:roomInfo = _context13.sent;
-	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context13.next = 7;return (
-	                  _this19._connectGame(addr, secureAddr));case 7:_context13.next = 9;return (
-	                  _this19._joinGameRoom(cid));case 9:
+	                  _this19._lobbyConn.rejoinRoom(roomName));case 3:roomInfo = _context12.sent;
+	                cid = roomInfo.cid, addr = roomInfo.addr, secureAddr = roomInfo.secureAddr;_context12.next = 7;return (
+	                  _this19._connectGame(addr, secureAddr));case 7:_context12.next = 9;return (
+	                  _this19._joinGameRoom(cid));case 9:gameRoom = _context12.sent;
 	                _this19.handle('onTransition', 'game');
-	                resolve();_context13.next = 17;break;case 13:_context13.prev = 13;_context13.t0 = _context13['catch'](0);
+	                resolve(gameRoom);_context12.next = 18;break;case 14:_context12.prev = 14;_context12.t0 = _context12['catch'](0);
 
 	                _this19.handle('onTransition', 'lobby');
-	                reject(_context13.t0);case 17:case 'end':return _context13.stop();}}}, _callee13, _this19, [[0, 13]]);}));return function (_x22, _x23) {return _ref15.apply(this, arguments);};}());
+	                reject(_context12.t0);case 18:case 'end':return _context12.stop();}}}, _callee12, _this19, [[0, 14]]);}));return function (_x21, _x22) {return _ref14.apply(this, arguments);};}());
 
 
 	  },
 
 	  _connectLobby: function _connectLobby() {var _this20 = this;
-	    return new _Promise(function () {var _ref16 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee14(resolve, reject) {var lobbyRouterUrl, lobbyServerInfo, primaryServer, secondaryServer, _play2, appId, userId, gameVersion;return regenerator.wrap(function _callee14$(_context14) {while (1) {switch (_context14.prev = _context14.next) {case 0:_context14.prev = 0;_context14.next = 3;return (
+	    return new _Promise(function () {var _ref15 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee13(resolve, reject) {var lobbyRouterUrl, lobbyServerInfo, primaryServer, secondaryServer, _play2, appId, userId, gameVersion;return regenerator.wrap(function _callee13$(_context13) {while (1) {switch (_context13.prev = _context13.next) {case 0:_context13.prev = 0;_context13.next = 3;return (
 
 
-	                  _this20._appRouter.fetch());case 3:lobbyRouterUrl = _context14.sent;_context14.next = 6;return (
+	                  _this20._appRouter.fetch());case 3:lobbyRouterUrl = _context13.sent;_context13.next = 6;return (
 
-	                  _this20._router.fetch(lobbyRouterUrl));case 6:lobbyServerInfo = _context14.sent;
+	                  _this20._router.fetch(lobbyRouterUrl));case 6:lobbyServerInfo = _context13.sent;
 	                primaryServer = lobbyServerInfo.primaryServer, secondaryServer = lobbyServerInfo.secondaryServer;
 	                _this20._primaryServer = primaryServer;
 	                _this20._secondaryServer = secondaryServer;
 	                // 与大厅服务器建立连接
-	                _context14.next = 12;return _this20._lobbyConn.connect(_this20._primaryServer, _this20._play._userId);case 12:_context14.next = 17;break;case 14:_context14.prev = 14;_context14.t0 = _context14['catch'](0);
+	                _context13.next = 12;return _this20._lobbyConn.connect(_this20._primaryServer, _this20._play._userId);case 12:_context13.next = 17;break;case 14:_context13.prev = 14;_context13.t0 = _context13['catch'](0);
 
-	                reject(_context14.t0);case 17:
+	                reject(_context13.t0);case 17:
 
 	                // 打开大厅服务器会话
 	                _play2 =
 
 
 
-	                _this20._play, appId = _play2._appId, userId = _play2._userId, gameVersion = _play2._gameVersion;_context14.prev = 18;_context14.next = 21;return (
+	                _this20._play, appId = _play2._appId, userId = _play2._userId, gameVersion = _play2._gameVersion;_context13.prev = 18;_context13.next = 21;return (
 
 	                  _this20._lobbyConn.openSession(appId, userId, gameVersion));case 21:
-	                resolve(_this20._play);_context14.next = 29;break;case 24:_context14.prev = 24;_context14.t1 = _context14['catch'](18);_context14.next = 28;return (
+	                resolve(_this20._play);_context13.next = 28;break;case 24:_context13.prev = 24;_context13.t1 = _context13['catch'](18);
 
-	                  _this20._lobbyConn.close());case 28:
-	                reject(_context14.t1);case 29:case 'end':return _context14.stop();}}}, _callee14, _this20, [[0, 14], [18, 24]]);}));return function (_x24, _x25) {return _ref16.apply(this, arguments);};}());
+	                _this20._lobbyConn.close();
+	                reject(_context13.t1);case 28:case 'end':return _context13.stop();}}}, _callee13, _this20, [[0, 14], [18, 24]]);}));return function (_x23, _x24) {return _ref15.apply(this, arguments);};}());
 
 
 	  },
 
 	  _connectGame: function _connectGame(addr, secureAddr) {var _this21 = this;
-	    return new _Promise(function () {var _ref17 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee15(resolve, reject) {var gameServer, _play3, appId, userId, gameVersion;return regenerator.wrap(function _callee15$(_context15) {while (1) {switch (_context15.prev = _context15.next) {case 0:_context15.prev = 0;
+	    return new _Promise(function () {var _ref16 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee14(resolve, reject) {var gameServer, _play3, appId, userId, gameVersion;return regenerator.wrap(function _callee14$(_context14) {while (1) {switch (_context14.prev = _context14.next) {case 0:_context14.prev = 0;
 
 
-	                gameServer = addr || secureAddr;_context15.next = 4;return (
-	                  _this21._gameConn.connect(gameServer, _this21._play._userId));case 4:_context15.next = 9;break;case 6:_context15.prev = 6;_context15.t0 = _context15['catch'](0);
+	                gameServer = addr || secureAddr;_context14.next = 4;return (
+	                  _this21._gameConn.connect(gameServer, _this21._play._userId));case 4:_context14.next = 9;break;case 6:_context14.prev = 6;_context14.t0 = _context14['catch'](0);
 
-	                reject(_context15.t0);case 9:_context15.prev = 9;_play3 =
-
-
-
+	                reject(_context14.t0);case 9:_context14.prev = 9;_play3 =
 
 
 
 
-	                _this21._play, appId = _play3._appId, userId = _play3._userId, gameVersion = _play3._gameVersion;_context15.next = 13;return (
+
+
+
+	                _this21._play, appId = _play3._appId, userId = _play3._userId, gameVersion = _play3._gameVersion;_context14.next = 13;return (
 	                  _this21._gameConn.openSession(appId, userId, gameVersion));case 13:
-	                resolve();_context15.next = 21;break;case 16:_context15.prev = 16;_context15.t1 = _context15['catch'](9);_context15.next = 20;return (
+	                resolve();_context14.next = 20;break;case 16:_context14.prev = 16;_context14.t1 = _context14['catch'](9);
 
-	                  _this21._gameConn.close());case 20:
-	                reject(_context15.t1);case 21:case 'end':return _context15.stop();}}}, _callee15, _this21, [[0, 6], [9, 16]]);}));return function (_x26, _x27) {return _ref17.apply(this, arguments);};}());
+	                _this21._gameConn.close();
+	                reject(_context14.t1);case 20:case 'end':return _context14.stop();}}}, _callee14, _this21, [[0, 6], [9, 16]]);}));return function (_x25, _x26) {return _ref16.apply(this, arguments);};}());
 
 
 	  },
 
 	  _createGameRoom: function _createGameRoom(cid, roomOptions, expectedUserIds) {var _this22 = this;
-	    return new _Promise(function () {var _ref18 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee16(resolve, reject) {var gameRoom;return regenerator.wrap(function _callee16$(_context16) {while (1) {switch (_context16.prev = _context16.next) {case 0:_context16.prev = 0;_context16.next = 3;return (
+	    return new _Promise(function () {var _ref17 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee15(resolve, reject) {var gameRoom;return regenerator.wrap(function _callee15$(_context15) {while (1) {switch (_context15.prev = _context15.next) {case 0:_context15.prev = 0;_context15.next = 3;return (
 
 	                  _this22._gameConn.createRoom(
 	                  cid,
 	                  roomOptions,
-	                  expectedUserIds));case 3:gameRoom = _context16.sent;
+	                  expectedUserIds));case 3:gameRoom = _context15.sent;
 
-	                _this22._initGame(gameRoom);_context16.next = 7;return (
-	                  _this22._lobbyConn.close());case 7:
-	                resolve();_context16.next = 15;break;case 10:_context16.prev = 10;_context16.t0 = _context16['catch'](0);_context16.next = 14;return (
+	                _this22._initGame(gameRoom);
+	                _this22._lobbyConn.close();
+	                resolve(gameRoom);_context15.next = 13;break;case 9:_context15.prev = 9;_context15.t0 = _context15['catch'](0);
 
-	                  _this22._gameConn.close());case 14:
-	                reject(_context16.t0);case 15:case 'end':return _context16.stop();}}}, _callee16, _this22, [[0, 10]]);}));return function (_x28, _x29) {return _ref18.apply(this, arguments);};}());
+	                _this22._gameConn.close();
+	                reject(_context15.t0);case 13:case 'end':return _context15.stop();}}}, _callee15, _this22, [[0, 9]]);}));return function (_x27, _x28) {return _ref17.apply(this, arguments);};}());
 
 
 	  },
 
 	  _joinGameRoom: function _joinGameRoom(cid, expectedUserIds, matchProperties) {var _this23 = this;
-	    return new _Promise(function () {var _ref19 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee17(resolve, reject) {var gameRoom;return regenerator.wrap(function _callee17$(_context17) {while (1) {switch (_context17.prev = _context17.next) {case 0:_context17.prev = 0;_context17.next = 3;return (
+	    return new _Promise(function () {var _ref18 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee16(resolve, reject) {var gameRoom;return regenerator.wrap(function _callee16$(_context16) {while (1) {switch (_context16.prev = _context16.next) {case 0:_context16.prev = 0;_context16.next = 3;return (
 
 	                  _this23._gameConn.joinRoom(
 	                  cid,
 	                  matchProperties,
-	                  expectedUserIds));case 3:gameRoom = _context17.sent;
+	                  expectedUserIds));case 3:gameRoom = _context16.sent;
 
-	                _this23._initGame(gameRoom);_context17.next = 7;return (
-	                  _this23._lobbyConn.close());case 7:
-	                resolve();_context17.next = 15;break;case 10:_context17.prev = 10;_context17.t0 = _context17['catch'](0);_context17.next = 14;return (
+	                _this23._initGame(gameRoom);
+	                _this23._lobbyConn.close();
+	                resolve(gameRoom);_context16.next = 13;break;case 9:_context16.prev = 9;_context16.t0 = _context16['catch'](0);
 
-	                  _this23._gameConn.close());case 14:
-	                reject(_context17.t0);case 15:case 'end':return _context17.stop();}}}, _callee17, _this23, [[0, 10]]);}));return function (_x30, _x31) {return _ref19.apply(this, arguments);};}());
+	                _this23._gameConn.close();
+	                reject(_context16.t0);case 13:case 'end':return _context16.stop();}}}, _callee16, _this23, [[0, 9]]);}));return function (_x29, _x30) {return _ref18.apply(this, arguments);};}());
 
 
 	  },
@@ -26032,14 +26113,14 @@
 	  } });
 
 	/**
-	                                  * 多人对战游戏服务的客户端
-	                                  * @param {Object} opts
-	                                  * @param {String} opts.userId 玩家唯一 Id
-	                                  * @param {String} opts.appId APP ID
-	                                  * @param {String} opts.appKey APP KEY
-	                                  * @param {Boolean} [opts.ssl] 是否使用 ssl，仅在 Client Engine 中可用
-	                                  * @param {String} [opts.gameVersion] 游戏版本号
-	                                  */var
+	                                              * 多人对战游戏服务的客户端
+	                                              * @param {Object} opts
+	                                              * @param {String} opts.userId 玩家唯一 Id
+	                                              * @param {String} opts.appId APP ID
+	                                              * @param {String} opts.appKey APP KEY
+	                                              * @param {Boolean} [opts.ssl] 是否使用 ssl，仅在 Client Engine 中可用
+	                                              * @param {String} [opts.gameVersion] 游戏版本号
+	                                              */var
 	Client = function (_EventEmitter) {_inherits(Client, _EventEmitter);
 	  function Client(opts) {_classCallCheck(this, Client);var _this = _possibleConstructorReturn(this, (Client.__proto__ || _Object$getPrototypeOf(Client)).call(this));
 
@@ -26132,7 +26213,7 @@
 	    /**
 	                                                                                                                                                                                                      * 创建房间
 	                                                                                                                                                                                                      * @param {Object} [opts] 创建房间选项
-	                                                                                                                                                                                                      * @param {string} [opts.roomName] 房间名称，在整个游戏中唯一，默认值为 null，则由服务端分配一个唯一 Id
+	                                                                                                                                                                                                      * @param {String} [opts.roomName] 房间名称，在整个游戏中唯一，默认值为 null，则由服务端分配一个唯一 Id
 	                                                                                                                                                                                                      * @param {Object} [opts.roomOptions] 创建房间选项，默认值为 null
 	                                                                                                                                                                                                      * @param {Boolean} [opts.roomOptions.opened] 房间是否打开
 	                                                                                                                                                                                                      * @param {Boolean} [opts.roomOptions.visible] 房间是否可见，只有「可见」的房间会出现在房间列表里
@@ -26140,9 +26221,9 @@
 	                                                                                                                                                                                                      * @param {Number} [opts.roomOptions.playerTtl] 玩家掉线后，延迟销毁的时间
 	                                                                                                                                                                                                      * @param {Number} [opts.roomOptions.maxPlayerCount] 最大玩家数量
 	                                                                                                                                                                                                      * @param {Object} [opts.roomOptions.customRoomProperties] 自定义房间属性
-	                                                                                                                                                                                                      * @param {Array.<string>} [opts.roomOptions.customRoomPropertyKeysForLobby] 在大厅中可获得的房间属性「键」数组
+	                                                                                                                                                                                                      * @param {Array.<String>} [opts.roomOptions.customRoomPropertyKeysForLobby] 在大厅中可获得的房间属性「键」数组
 	                                                                                                                                                                                                      * @param {CreateRoomFlag} [opts.roomOptions.flag] 创建房间标记，可多选
-	                                                                                                                                                                                                      * @param {Array.<string>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
+	                                                                                                                                                                                                      * @param {Array.<String>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
 	                                                                                                                                                                                                      */ }, { key: 'createRoom', value: function () {var _ref7 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7() {var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] :
 
 
@@ -26169,7 +26250,7 @@
 
 	    /**
 	                                                                                                                                                                                        * 加入房间
-	                                                                                                                                                                                        * @param {string} roomName 房间名称
+	                                                                                                                                                                                        * @param {String} roomName 房间名称
 	                                                                                                                                                                                        * @param {*} [expectedUserIds] 邀请好友 ID 数组，默认值为 null
 	                                                                                                                                                                                        */ }, { key: 'joinRoom', value: function () {var _ref9 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(
 	      roomName) {var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},_ref10$expectedUserId = _ref10.expectedUserIds,expectedUserIds = _ref10$expectedUserId === undefined ? null : _ref10$expectedUserId;return regenerator.wrap(function _callee8$(_context8) {while (1) {switch (_context8.prev = _context8.next) {case 0:if (
@@ -26184,7 +26265,7 @@
 
 	    /**
 	                                                                                                                                                                                                                              * 重新加入房间
-	                                                                                                                                                                                                                              * @param {string} roomName 房间名称
+	                                                                                                                                                                                                                              * @param {String} roomName 房间名称
 	                                                                                                                                                                                                                              */ }, { key: 'rejoinRoom', value: function () {var _ref11 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(
 	      roomName) {return regenerator.wrap(function _callee9$(_context9) {while (1) {switch (_context9.prev = _context9.next) {case 0:if (
 	                typeof roomName === 'string') {_context9.next = 2;break;}throw (
@@ -26195,7 +26276,7 @@
 
 	    /**
 	                                                                                                                                                                                                                    * 随机加入或创建房间
-	                                                                                                                                                                                                                    * @param {string} roomName 房间名称
+	                                                                                                                                                                                                                    * @param {String} roomName 房间名称
 	                                                                                                                                                                                                                    * @param {Object} [opts] 创建房间选项
 	                                                                                                                                                                                                                    * @param {Object} [opts.roomOptions] 创建房间选项，默认值为 null
 	                                                                                                                                                                                                                    * @param {Boolean} [opts.roomOptions.opened] 房间是否打开
@@ -26204,9 +26285,9 @@
 	                                                                                                                                                                                                                    * @param {Number} [opts.roomOptions.playerTtl] 玩家掉线后，延迟销毁的时间
 	                                                                                                                                                                                                                    * @param {Number} [opts.roomOptions.maxPlayerCount] 最大玩家数量
 	                                                                                                                                                                                                                    * @param {Object} [opts.roomOptions.customRoomProperties] 自定义房间属性
-	                                                                                                                                                                                                                    * @param {Array.<string>} [opts.roomOptions.customRoomPropertyKeysForLobby] 在大厅中可获得的房间属性「键」数组
+	                                                                                                                                                                                                                    * @param {Array.<String>} [opts.roomOptions.customRoomPropertyKeysForLobby] 在大厅中可获得的房间属性「键」数组
 	                                                                                                                                                                                                                    * @param {CreateRoomFlag} [opts.roomOptions.flag] 创建房间标记，可多选
-	                                                                                                                                                                                                                    * @param {Array.<string>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
+	                                                                                                                                                                                                                    * @param {Array.<String>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
 	                                                                                                                                                                                                                    */ }, { key: 'joinOrCreateRoom', value: function () {var _ref12 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10(
 
 	      roomName) {var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] :
@@ -26233,7 +26314,7 @@
 	                                                                                                                                                                                                          * 随机加入房间
 	                                                                                                                                                                                                          * @param {Object} [opts] 随机加入房间选项
 	                                                                                                                                                                                                          * @param {Object} [opts.matchProperties] 匹配属性，默认值为 null
-	                                                                                                                                                                                                          * @param {Array.<string>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
+	                                                                                                                                                                                                          * @param {Array.<String>} [opts.expectedUserIds] 邀请好友 ID 数组，默认值为 null
 	                                                                                                                                                                                                          */ }, { key: 'joinRandomRoom', value: function () {var _ref14 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {var _ref15 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] :
 
 
@@ -26278,7 +26359,7 @@
 
 	    /**
 	                                                                                                                                                                                                                                 * 设置房主
-	                                                                                                                                                                                                                                 * @param {number} newMasterId 新房主 ID
+	                                                                                                                                                                                                                                 * @param {Number} newMasterId 新房主 ID
 	                                                                                                                                                                                                                                 */ }, { key: 'setMaster', value: function () {var _ref18 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee14(
 	      newMasterId) {return regenerator.wrap(function _callee14$(_context14) {while (1) {switch (_context14.prev = _context14.next) {case 0:if (
 	                typeof newMasterId === 'number') {_context14.next = 2;break;}throw (
@@ -26292,13 +26373,17 @@
 
 	    /**
 	                                                                                                                                                                                                                       * 发送自定义消息
-	                                                                                                                                                                                                                       * @param {number|string} eventId 事件 ID
+	                                                                                                                                                                                                                       * @param {Number|String} eventId 事件 ID
 	                                                                                                                                                                                                                       * @param {Object} eventData 事件参数
 	                                                                                                                                                                                                                       * @param {Object} options 发送事件选项
 	                                                                                                                                                                                                                       * @param {ReceiverGroup} options.receiverGroup 接收组
-	                                                                                                                                                                                                                       * @param {Array.<number>} options.targetActorIds 接收者 Id。如果设置，将会覆盖 receiverGroup
+	                                                                                                                                                                                                                       * @param {Array.<Number>} options.targetActorIds 接收者 Id。如果设置，将会覆盖 receiverGroup
 	                                                                                                                                                                                                                       */ }, { key: 'sendEvent', value: function () {var _ref19 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee15(
-	      eventId, eventData, options) {return regenerator.wrap(function _callee15$(_context15) {while (1) {switch (_context15.prev = _context15.next) {case 0:if (!(
+
+	      eventId) {var
+	        eventData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};var
+	        options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : { receiverGroup: ReceiverGroup.All };return regenerator.wrap(function _callee15$(_context15) {while (1) {switch (_context15.prev = _context15.next) {case 0:if (!(
+
 	                !(typeof eventId === 'string') && !(typeof eventId === 'number'))) {_context15.next = 2;break;}throw (
 	                  new TypeError(eventId + ' is not a string or number'));case 2:if (
 
@@ -26320,12 +26405,12 @@
 	                this._player === null)) {_context15.next = 12;break;}throw (
 	                  new Error('player is null'));case 12:return _context15.abrupt('return',
 
-	                this._fsm.handle('sendEvent', eventId, eventData, options));case 13:case 'end':return _context15.stop();}}}, _callee15, this);}));function sendEvent(_x11, _x12, _x13) {return _ref19.apply(this, arguments);}return sendEvent;}()
+	                this._fsm.handle('sendEvent', eventId, eventData, options));case 13:case 'end':return _context15.stop();}}}, _callee15, this);}));function sendEvent(_x13) {return _ref19.apply(this, arguments);}return sendEvent;}()
 
 
 	    /**
-	                                                                                                                                                                                                                                                    * 离开房间
-	                                                                                                                                                                                                                                                    */ }, { key: 'leaveRoom', value: function () {var _ref20 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee16() {return regenerator.wrap(function _callee16$(_context16) {while (1) {switch (_context16.prev = _context16.next) {case 0:return _context16.abrupt('return',
+	                                                                                                                                                                                                                                        * 离开房间
+	                                                                                                                                                                                                                                        */ }, { key: 'leaveRoom', value: function () {var _ref20 = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee16() {return regenerator.wrap(function _callee16$(_context16) {while (1) {switch (_context16.prev = _context16.next) {case 0:return _context16.abrupt('return',
 
 	                this._fsm.handle('leaveRoom'));case 1:case 'end':return _context16.stop();}}}, _callee16, this);}));function leaveRoom() {return _ref20.apply(this, arguments);}return leaveRoom;}()
 
@@ -26352,6 +26437,7 @@
 
 	    /**
 	                                                                                                                                                                                                                                 * 暂停消息队列处理
+	                                                                                                                                                                                                                                 * @return {void}
 	                                                                                                                                                                                                                                 */ }, { key: 'pauseMessageQueue', value: function pauseMessageQueue()
 	    {
 	      this._fsm.handle('pauseMessageQueue');
@@ -26359,6 +26445,7 @@
 
 	    /**
 	       * 恢复消息队列处理
+	       * @return {void}
 	       */ }, { key: 'resumeMessageQueue', value: function resumeMessageQueue()
 	    {
 	      this._fsm.handle('resumeMessageQueue');
@@ -26366,7 +26453,7 @@
 
 	    /**
 	       * 获取当前所在房间
-	       * @return {Room}
+	       * @type {Room}
 	       * @readonly
 	       */ }, { key: '_setRoomCustomProperties',
 
@@ -26438,39 +26525,26 @@
 	    // 模拟断线
 	  }, { key: '_simulateDisconnection', value: function _simulateDisconnection() {
 	      this._fsm.handle('_simulateDisconnection');
-	    } }, { key: 'room', get: function get() {return this._room;} /**
-	                                                                  * 获取当前玩家
-	                                                                  * @return {Player}
-	                                                                  * @readonly
-	                                                                  */ }, { key: 'player', get: function get() {return this._player;} /**
-	                                                                                                                                     * 获取房间列表
-	                                                                                                                                     * @return {Array.<LobbyRoom>}
-	                                                                                                                                     * @readonly
-	                                                                                                                                     */ }, { key: 'lobbyRoomList', get: function get() {return this._lobbyRoomList;} }]);return Client;}(eventemitter3);
+	    }
 
-	/**
-	 * 接收组枚举
-	 * @readonly
-	 * @enum {number}
-	 */
-	var ReceiverGroup = {
-	  /**
-	                       * 其他人（除了自己之外的所有人）
-	                       */
-	  Others: 0,
-	  /**
-	              * 所有人（包括自己）
-	              */
-	  All: 1,
-	  /**
-	           * 主机客户端
-	           */
-	  MasterClient: 2 };
+	    /**
+	       * 获取用户 id
+	       * @type {String}
+	       * @readonly
+	       */ }, { key: 'room', get: function get() {return this._room;} /**
+	                                                                      * 获取当前玩家
+	                                                                      * @type {Player}
+	                                                                      * @readonly
+	                                                                      */ }, { key: 'player', get: function get() {return this._player;} /**
+	                                                                                                                                         * 获取房间列表
+	                                                                                                                                         * @type {Array.<LobbyRoom>}
+	                                                                                                                                         * @readonly
+	                                                                                                                                         */ }, { key: 'lobbyRoomList', get: function get() {return this._lobbyRoomList;} }, { key: 'userId', get: function get() {return this._userId;} }]);return Client;}(eventemitter3);
 
 	/**
 	 * 创建房间标识
 	 * @readonly
-	 * @enum {number}
+	 * @enum {Number}
 	 */
 	var CreateRoomFlag = {
 	  /**

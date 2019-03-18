@@ -60,15 +60,16 @@ cc.Class({
       await client.joinOrCreateRoom("leancloud");
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(player => {
-        if (!player.isLocal()) {
+        if (!player.isLocal) {
           this.newBall(player);
         }
       });
       // 判断自己是否是 Master，来确定是否需要生成食物
-      if (client.player.isMaster()) {
+      if (client.player.isMaster) {
+        cc.log("I am master");
         const roomFoods = [];
         // 只生成数据
-        let { roomFoodId } = client.room.CustomProperties;
+        let { roomFoodId } = client.room.customProperties;
         if (!roomFoodId) {
           roomFoodId = 0;
         }
@@ -86,7 +87,7 @@ cc.Class({
         });
         this.bornPlayer(client.player);
       } else {
-        const { roomFoods } = client.room.CustomProperties;
+        const { roomFoods } = client.room.customProperties;
         if (roomFoods) {
           this.spawnFoods(roomFoods);
         }
@@ -123,17 +124,10 @@ cc.Class({
     cc.log(`born pos: ${pos}`);
     player.setCustomProperties({ weight, speed, pos });
     // 通知玩家出生
-    const options = {
-      receiverGroup: ReceiverGroup.All
-    };
     const client = getClient();
-    client.sendEvent(
-      Constants.BORN_EVENT,
-      {
-        playerId: player.actorId
-      },
-      options
-    );
+    client.sendEvent(Constants.BORN_EVENT, {
+      playerId: player.actorId
+    });
   },
 
   newBall(player) {
@@ -170,7 +164,7 @@ cc.Class({
     // 生成其他玩家
     console.log(`${newPlayer.userId} joined room`);
     const client = getClient();
-    if (client.player.isMaster()) {
+    if (client.player.isMaster) {
       this.bornPlayer(newPlayer);
     }
   },
@@ -189,7 +183,7 @@ cc.Class({
     );
     const { move } = changedProps;
     if (move) {
-      if (!player.isLocal()) {
+      if (!player.isLocal) {
         // 模拟移动
       }
     }
@@ -202,7 +196,7 @@ cc.Class({
       const { playerId } = eventData;
       const player = client.room.getPlayer(playerId);
       const ball = this.newBall(player);
-      if (player.isLocal()) {
+      if (player.isLocal) {
         // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
         const playerCtrl = ball.node.addComponent(PlayerController);
         playerCtrl.hero = ball;

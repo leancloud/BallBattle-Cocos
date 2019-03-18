@@ -55,9 +55,9 @@ cc.Class({
   update(dt) {
     const { x, y } = this.node;
     this.infoLabel.string = `(${parseInt(x)}, ${parseInt(y)})`;
-    if (!this._player.isLocal()) {
+    if (!this._player.isLocal) {
       // 如果不是当前客户端，则模拟运动
-      const move = this._player.CustomProperties.move;
+      const move = this._player.customProperties.move;
       if (move) {
         // 模拟计算当前应该所处位置
         const now = Date.now();
@@ -90,7 +90,7 @@ cc.Class({
       const { node: foodNode } = other;
       const food = foodNode.getComponent(Food);
       const client = getClient();
-      if (client.player.isMaster()) {
+      if (client.player.isMaster) {
         // Master 用来处理逻辑同步
         // 同步玩家属性：体重和速度
         let { weight } = this._player.customProperties;
