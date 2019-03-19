@@ -30,6 +30,29 @@ cc.Class({
       this
     );
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
+    if (client.player.isMaster) {
+      setInterval(() => {
+        const foods = Object.values(this._idToFoods);
+        console.log(`current foods count: ${foods.length}`);
+        const roomFoods = [];
+        foods.forEach(f => {
+          const { id, type } = f;
+          const { x, y } = f.node.position;
+          roomFoods.push({
+            id,
+            type,
+            x,
+            y
+          });
+        });
+        client.room.setCustomProperties({
+          roomFoods
+        });
+      }, Constants.SYNC_FOOD_DURATION);
+      setInterval(() => {
+        // TODO 补充食物
+      }, Constants.SPAWN_FOOD_DURATION);
+    }
   },
 
   /**
@@ -74,6 +97,7 @@ cc.Class({
         this.node.addChild(foodNode);
         const food = foodNode.getComponent(Food);
         food.id = id;
+        food.type = type;
         this._idToFoods[id] = food;
       });
     }
@@ -98,9 +122,11 @@ cc.Class({
   onEatEvent(eventData) {
     const { bId, fId } = eventData;
     cc.log(`remove food: ${fId}`);
-    // 移除 food
     const food = this._idToFoods[fId];
-    delete this._idToFoods[fId];
-    this.node.removeChild(food.node);
+    if (food) {
+      // Cocos 在这里有时候会触发多次
+      this.node.removeChild(food.node);
+      delete this._idToFoods[fId];
+    }
   }
 });

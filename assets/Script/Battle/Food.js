@@ -5,7 +5,8 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    id: 0
+    id: 0,
+    type: 0
   },
 
   // LIFE-CYCLE CALLBACKS:

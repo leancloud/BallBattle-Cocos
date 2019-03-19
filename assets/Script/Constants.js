@@ -9,6 +9,10 @@ const BOTTOM = -TOP;
 const DISTANCE_MAG = 2;
 // 初始生成食物数量
 const INIT_FOOD_COUNT = 100;
+// 同步食物时长
+const SYNC_FOOD_DURATION = 2000;
+// 补充食物时长
+const SPAWN_FOOD_DURATION = 10000;
 
 // 节点组
 const BALL_GROUP = "ball";
@@ -43,6 +47,8 @@ module.exports = {
   BOTTOM,
   DISTANCE_MAG,
   INIT_FOOD_COUNT,
+  SYNC_FOOD_DURATION,
+  SPAWN_FOOD_DURATION,
 
   BALL_GROUP,
   FOOD_GROUP,

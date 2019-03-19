@@ -1,8 +1,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.Play = {})));
-}(this, (function (exports) { 'use strict';
+	(global = global || self, factory(global.Play = {}));
+}(this, function (exports) { 'use strict';
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -484,6 +484,8 @@
 	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -492,7 +494,7 @@
 	    $default = function values() { return $native.call(this); };
 	  }
 	  // Define iterator
-	  if ((FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
 	    _hide(proto, ITERATOR, $default);
 	  }
 	  // Plug for library
@@ -2339,7 +2341,7 @@
 	    return capability.promise;
 	  }
 	});
-	_export(_export.S + _export.F * (_library), PROMISE, {
+	_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
 	  // 25.4.4.6 Promise.resolve(x)
 	  resolve: function resolve(x) {
 	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
@@ -3300,6 +3302,22 @@
 	  typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
 	  typedArrayTags[setTag] = typedArrayTags[stringTag] =
 	  typedArrayTags[weakMapTag] = false;
+
+	  /** Used to identify `toStringTag` values supported by `_.clone`. */
+	  var cloneableTags = {};
+	  cloneableTags[argsTag] = cloneableTags[arrayTag] =
+	  cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+	  cloneableTags[boolTag] = cloneableTags[dateTag] =
+	  cloneableTags[float32Tag] = cloneableTags[float64Tag] =
+	  cloneableTags[int8Tag] = cloneableTags[int16Tag] =
+	  cloneableTags[int32Tag] = cloneableTags[mapTag] =
+	  cloneableTags[numberTag] = cloneableTags[objectTag] =
+	  cloneableTags[regexpTag] = cloneableTags[setTag] =
+	  cloneableTags[stringTag] = cloneableTags[symbolTag] =
+	  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+	  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+	  cloneableTags[errorTag] = cloneableTags[funcTag] =
+	  cloneableTags[weakMapTag] = false;
 
 	  /** Used to map Latin Unicode letters to basic Latin letters. */
 	  var deburredLetters = {
@@ -5632,7 +5650,7 @@
 	              : copySymbols(value, baseAssign(result, value));
 	          }
 	        } else {
-	          {
+	          if (!cloneableTags[tag]) {
 	            return object ? value : {};
 	          }
 	          result = initCloneByTag(value, tag, isDeep);
@@ -8972,10 +8990,11 @@
 
 	      try {
 	        value[symToStringTag] = undefined;
+	        var unmasked = true;
 	      } catch (e) {}
 
 	      var result = nativeObjectToString.call(value);
-	      {
+	      if (unmasked) {
 	        if (isOwn) {
 	          value[symToStringTag] = tag;
 	        } else {
@@ -25742,7 +25761,10 @@
 	        then(
 	        tap(function (res) {var
 	          attr = res.attr;
-	          _this10._play._room._mergeProperties(attr);
+	          if (attr) {
+	            // 如果属性没变化，服务端则不会下发 attr 属性
+	            _this10._play._room._mergeProperties(attr);
+	          }
 	        }));
 
 	      },
@@ -25753,8 +25775,10 @@
 	        then(
 	        tap(function (res) {var
 	          aId = res.actorId,attr = res.attr;
-	          var player = _this11._play._room.getPlayer(aId);
-	          player._mergeProperties(attr);
+	          if (aId && attr) {
+	            var player = _this11._play._room.getPlayer(aId);
+	            player._mergeProperties(attr);
+	          }
 	        }));
 
 	      },
@@ -26569,5 +26593,5 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=play.js.map

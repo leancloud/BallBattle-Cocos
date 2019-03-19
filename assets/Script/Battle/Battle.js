@@ -47,12 +47,12 @@ cc.Class({
     initClient(userId);
     const client = getClient();
     this.initPlayEvent();
-    this.foodSpawner.initPlay();
 
     try {
       await client.connect();
       cc.log("connect done");
       await client.joinOrCreateRoom("leancloud");
+      this.foodSpawner.initPlay();
       this.ui.initPlay();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(player => {
@@ -130,7 +130,9 @@ cc.Class({
 
   onPlayerPropertiesChanged({ player, changedProps }) {
     cc.log(
-      `player ${player.userId} changed props: ${JSON.stringify(changedProps)}`
+      `battle player ${player.userId} changed props: ${JSON.stringify(
+        changedProps
+      )}`
     );
     const { move } = changedProps;
     if (move) {

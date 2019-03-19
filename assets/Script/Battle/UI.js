@@ -84,7 +84,9 @@ cc.Class({
 
   onPlayerPropertiesChanged({ player, changedProps }) {
     cc.log(
-      `player ${player.userId} changed props: ${JSON.stringify(changedProps)}`
+      `ui player ${player.userId} changed props: ${JSON.stringify(
+        changedProps
+      )}`
     );
     const { weight } = changedProps;
     if (weight) {

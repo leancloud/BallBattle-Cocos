@@ -92,6 +92,8 @@ cc.Class({
     if (otherGroup === Constants.FOOD_GROUP) {
       // 球碰食物
       const { node: foodNode } = other;
+      const { x, y } = self.node.position;
+      cc.log(`collide food: (${x}, ${y})`);
       const food = foodNode.getComponent(Food);
       if (client.player.isMaster) {
         // Master 用来处理逻辑同步
