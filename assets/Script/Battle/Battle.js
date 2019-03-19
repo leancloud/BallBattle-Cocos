@@ -60,6 +60,7 @@ cc.Class({
       await client.connect();
       cc.log("connect done");
       await client.joinOrCreateRoom("leancloud");
+      this._ui.initPlay();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(player => {
         if (!player.isLocal) {

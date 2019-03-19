@@ -1,6 +1,7 @@
 const Constants = require("Constants");
 const LeanCloud = require("../LeanCloud");
 const Food = require("./Food");
+const Ball = require("./Ball");
 
 const { getClient } = LeanCloud;
 const { ReceiverGroup } = Play;
@@ -86,10 +87,12 @@ cc.Class({
 
   // 物理
   onCollisionEnter(other, self) {
-    if (other.node.group === Constants.FOOD_GROUP) {
+    const { group: otherGroup } = other.node;
+    const client = getClient();
+    if (otherGroup === Constants.FOOD_GROUP) {
+      // 球碰食物
       const { node: foodNode } = other;
       const food = foodNode.getComponent(Food);
-      const client = getClient();
       if (client.player.isMaster) {
         // Master 用来处理逻辑同步
         // 同步玩家属性：体重和速度
@@ -106,14 +109,25 @@ cc.Class({
         client.sendEvent(Constants.EAT_EVENT, { bId, fId }, options);
       }
       foodNode.active = false;
+    } else if (otherGroup === Constants.BALL_GROUP) {
+      // 球碰球
+      if (client.player.isMaster) {
+        // 比较两个球的体重，体重大者获胜
+        const { node: otherNode } = other;
+        const { node: selfNode } = self;
+        const otherBall = otherNode.getComponent(Ball);
+        const selfBall = selfNode.getComponent(Ball);
+        const otherPlayer = client.room.getPlayer(otherBall.id);
+        const selfPlayer = client.room.getPlayer(selfBall.id);
+        const { weight: otherWeight } = otherPlayer.customProperties;
+        const { weight: selfWeight } = selfPlayer.customProperties;
+        if (otherWeight > selfWeight) {
+          // TODO 对方胜利
+        } else {
+          // TODO 己方胜利
+        }
+      }
     }
-    // const { width, height, scaleX, scaleY } = this.node;
-    // const area = width * scaleX * height * scaleY;
-    // const newArea = area + 800;
-    // const newScale = Math.sqrt(newArea / (width * height));
-    // this.node.scale = cc.v2(newScale, newScale);
-    // // TODO 对象池
-    // other.node.destroy();
   },
 
   getId() {
@@ -122,5 +136,12 @@ cc.Class({
 
   getSpeed() {
     return this._speed;
+  },
+
+  getWeight() {
+    const collider = this.node.getComponent(cc.CircleCollider);
+    const { radius } = collider;
+    const { scaleX, scaleY } = this.node;
+    return Constants.PI * Math.pow(radius, 2) * scaleX * scaleY;
   }
 });

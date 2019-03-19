@@ -22,12 +22,16 @@ const SPEED_FACTOR = 300000;
 const MIN_SPEED = 30;
 // 食物重量
 const FOOD_WEIGHT = 100;
+// 圆周率
+const PI = 3.14;
 
 // 自定义事件
-// 出生事件
+// 玩家出生事件
 const BORN_EVENT = "BORN_EVENT";
 // 吃食物
 const EAT_EVENT = "EAT_EVENT";
+// 杀死玩家
+const KILL_EVENT = "KILL_EVENT";
 
 module.exports = {
   WIDTH,
@@ -47,7 +51,9 @@ module.exports = {
   SPEED_FACTOR,
   MIN_SPEED,
   FOOD_WEIGHT,
+  PI,
 
   BORN_EVENT,
-  EAT_EVENT
+  EAT_EVENT,
+  KILL_EVENT
 };
