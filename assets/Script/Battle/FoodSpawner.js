@@ -2,6 +2,7 @@ const LeanCloud = require("../LeanCloud");
 const { getClient } = LeanCloud;
 const { randomPos } = require("./BattleHelper");
 const Food = require("./Food");
+const Constants = require("../Constants");
 
 const { Event } = Play;
 
@@ -21,12 +22,14 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   initPlay() {
+    this._idToFoods = {};
     const client = getClient();
     client.on(
       Event.ROOM_CUSTOM_PROPERTIES_CHANGED,
       this.onRoomPropertiesChanged,
       this
     );
+    client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
   /**
@@ -71,6 +74,7 @@ cc.Class({
         this.node.addChild(foodNode);
         const food = foodNode.getComponent(Food);
         food.id = id;
+        this._idToFoods[id] = food;
       });
     }
   },
@@ -83,5 +87,20 @@ cc.Class({
     if (roomFoods) {
       this.spawnFoodNodes(roomFoods);
     }
+  },
+
+  onCustomEvent({ eventId, eventData }) {
+    if (eventId === Constants.EAT_EVENT) {
+      this.onEatEvent(eventData);
+    }
+  },
+
+  onEatEvent(eventData) {
+    const { bId, fId } = eventData;
+    cc.log(`remove food: ${fId}`);
+    // 移除 food
+    const food = this._idToFoods[fId];
+    delete this._idToFoods[fId];
+    this.node.removeChild(food.node);
   }
 });

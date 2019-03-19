@@ -24,29 +24,22 @@ cc.Class({
       type: FoodSpawner,
       default: null
     },
-    uiNode: {
-      type: cc.Node,
+    ui: {
+      type: UI,
       default: null
     },
     sceneCamera: {
       type: cc.Node,
       default: null
-    },
-    _idToBalls: {
-      default: {}
-    },
-    _idToFoods: {
-      default: {}
     }
   },
 
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
+    this._idToBalls = {};
     const manager = cc.director.getCollisionManager();
     manager.enabled = true;
-
-    this._ui = this.uiNode.getComponent(UI);
   },
 
   async start() {
@@ -60,7 +53,7 @@ cc.Class({
       await client.connect();
       cc.log("connect done");
       await client.joinOrCreateRoom("leancloud");
-      this._ui.initPlay();
+      this.ui.initPlay();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(player => {
         if (!player.isLocal) {
@@ -83,12 +76,13 @@ cc.Class({
   initPlayEvent() {
     const client = getClient();
     client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
+    client.on(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft, this);
     client.on(
       Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
       this.onPlayerPropertiesChanged,
       this
     );
-    client.on(Event.CUSTOM_EVENT, this.onReceiveCustomEvent, this);
+    client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
   bornPlayer(player) {
@@ -127,6 +121,13 @@ cc.Class({
     }
   },
 
+  onPlayerRoomLeft({ leftPlayer }) {
+    // 删除玩家
+    console.log(`${leftPlayer.userId} left room`);
+    const ball = this._idToBalls[leftPlayer.actorId];
+    this.node.removeChild(ball.node);
+  },
+
   onPlayerPropertiesChanged({ player, changedProps }) {
     cc.log(
       `player ${player.userId} changed props: ${JSON.stringify(changedProps)}`
@@ -139,27 +140,37 @@ cc.Class({
     }
   },
 
-  onReceiveCustomEvent({ eventId, eventData }) {
+  onCustomEvent({ eventId, eventData }) {
     cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);
-    const client = getClient();
     if (eventId == Constants.BORN_EVENT) {
-      const { playerId } = eventData;
-      const player = client.room.getPlayer(playerId);
-      const ball = this.newBall(player);
-      if (player.isLocal) {
-        // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
-        const playerCtrl = ball.node.addComponent(PlayerController);
-        playerCtrl.hero = ball;
-        // 设置摄像机跟随
-        const cameraNode = cc.find("Canvas/Main Camera");
-        cameraNode.removeFromParent();
-        ball.node.addChild(cameraNode);
-      }
+      this.onBornEvent(eventData);
     } else if (eventId === Constants.EAT_EVENT) {
-      const { bId, fId } = eventData;
-      cc.log(`${bId} eat food: ${fId}`);
-      const ball = this._idToBalls[bId];
-      ball.sync();
+      this.onEatEvent(eventData);
     }
+  },
+
+  // Custom Events
+
+  onBornEvent(eventData) {
+    const client = getClient();
+    const { playerId } = eventData;
+    const player = client.room.getPlayer(playerId);
+    const ball = this.newBall(player);
+    if (player.isLocal) {
+      // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
+      const playerCtrl = ball.node.addComponent(PlayerController);
+      playerCtrl.hero = ball;
+      // 设置摄像机跟随
+      const cameraNode = cc.find("Canvas/Main Camera");
+      cameraNode.removeFromParent();
+      ball.node.addChild(cameraNode);
+    }
+  },
+
+  onEatEvent(eventData) {
+    const { bId, fId } = eventData;
+    cc.log(`${bId} eat food: ${fId}`);
+    const ball = this._idToBalls[bId];
+    ball.sync();
   }
 });

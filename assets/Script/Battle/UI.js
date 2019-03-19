@@ -18,6 +18,10 @@ cc.Class({
     playerInfoItemTemplete: {
       type: cc.Prefab,
       default: null
+    },
+    myWeightLabel: {
+      type: cc.Label,
+      default: null
     }
   },
 
@@ -59,6 +63,9 @@ cc.Class({
       const { weight } = player.customProperties;
       playerInfoItem.setInfo(i + 1, player.userId, weight);
     }
+    // 更新自身重量
+    const { weight: myWeight } = client.player.customProperties;
+    this.myWeightLabel.string = `当前体重: ${myWeight}g`;
   },
 
   // Play Event
@@ -71,7 +78,7 @@ cc.Class({
 
   onPlayerRoomLeft() {
     const playerInfoItem = this._playerInfoItems.pop();
-    this.playerInfoListNode.remove(playerInfoItem.node);
+    this.playerInfoListNode.removeChild(playerInfoItem.node);
     this._updateList();
   },
 
