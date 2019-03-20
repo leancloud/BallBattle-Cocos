@@ -51,6 +51,10 @@ cc.Class({
       }, Constants.SYNC_FOOD_DURATION);
       setInterval(() => {
         // TODO 补充食物
+        const foods = Object.values(this._idToFoods);
+        const spawnFoodCount = Constants.INIT_FOOD_COUNT - foods.length;
+        cc.log(`respawn: ${spawnFoodCount}`);
+        this.spawnFoodsData(spawnFoodCount);
       }, Constants.SPAWN_FOOD_DURATION);
     }
   },
@@ -70,10 +74,8 @@ cc.Class({
     // 暂定初始生成 100 个食物
     for (let i = 0; i < count; i++) {
       const id = roomFoodId + i;
-      console.log(`length: ${this.foodTempleteList.length}`);
       const type =
         parseInt(Math.random() * 1000000) % this.foodTempleteList.length;
-      console.log(`type: ${type}`);
       const { x, y } = randomPos();
       roomFoods.push({ id, type, x, y });
     }
@@ -92,6 +94,9 @@ cc.Class({
     if (roomFoods) {
       roomFoods.forEach(roomFood => {
         const { id, type, x, y } = roomFood;
+        if (this._idToFoods[id]) {
+          return;
+        }
         const foodNode = cc.instantiate(this.foodTempleteList[type]);
         foodNode.position = cc.v2(x, y);
         this.node.addChild(foodNode);
@@ -123,10 +128,7 @@ cc.Class({
     const { bId, fId } = eventData;
     cc.log(`remove food: ${fId}`);
     const food = this._idToFoods[fId];
-    if (food) {
-      // Cocos 在这里有时候会触发多次
-      this.node.removeChild(food.node);
-      delete this._idToFoods[fId];
-    }
+    this.node.removeChild(food.node);
+    delete this._idToFoods[fId];
   }
 });

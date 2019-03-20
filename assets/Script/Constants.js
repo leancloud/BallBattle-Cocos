@@ -8,7 +8,7 @@ const BOTTOM = -TOP;
 // 距离最小容忍误差
 const DISTANCE_MAG = 2;
 // 初始生成食物数量
-const INIT_FOOD_COUNT = 100;
+const INIT_FOOD_COUNT = 200;
 // 同步食物时长
 const SYNC_FOOD_DURATION = 2000;
 // 补充食物时长
@@ -21,9 +21,9 @@ const FOOD_GROUP = "food";
 // 初始尺寸
 const BORN_SIZE = 48;
 // 速度因子，实际速度 = 速度因子 / 体重
-const SPEED_FACTOR = 300000;
+const SPEED_FACTOR = 3000000;
 // 最小速率
-const MIN_SPEED = 30;
+const MIN_SPEED = 300;
 // 食物重量
 const FOOD_WEIGHT = 100;
 // 圆周率
