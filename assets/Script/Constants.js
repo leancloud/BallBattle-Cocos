@@ -40,6 +40,8 @@ const BORN_EVENT = "BORN_EVENT";
 const EAT_EVENT = "EAT_EVENT";
 // 杀死玩家
 const KILL_EVENT = "KILL_EVENT";
+// 重生
+const REBORN_EVENT = "REBORN_EVENT";
 
 module.exports = {
   WIDTH,
@@ -67,5 +69,6 @@ module.exports = {
 
   BORN_EVENT,
   EAT_EVENT,
-  KILL_EVENT
+  KILL_EVENT,
+  REBORN_EVENT
 };

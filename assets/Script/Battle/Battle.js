@@ -160,6 +160,8 @@ cc.Class({
       this.onEatEvent(eventData);
     } else if (eventId === Constants.KILL_EVENT) {
       this.onKillEvent(eventData);
+    } else if (eventId == Constants.REBORN_EVENT) {
+      this.onRebornEvent(eventData);
     }
   },
 
@@ -190,7 +192,18 @@ cc.Class({
   },
 
   onKillEvent(eventData) {
-    const { winnerId, loserId } = eventData;
-    // TODO 杀死 Ball
+    const { loserId } = eventData;
+    // 杀死 Ball，将失败者的 node 设置为不活跃，也许需要等待用户点击复活
+    const ball = this._idToBalls[loserId];
+    ball.node.active = false;
+  },
+
+  onRebornEvent(eventData) {
+    const { playerId } = eventData;
+    const ball = this._idToBalls[playerId];
+    ball.node.active = true;
+    const client = getClient();
+    const player = client.room.getPlayer(playerId);
+    ball.init(player);
   }
 });

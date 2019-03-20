@@ -22,6 +22,18 @@ cc.Class({
   setInfo(rank, name, weight) {
     this.rankLabel.string = `${rank}`;
     this.nameLabel.string = `${name}`;
-    this.weightLabel.string = `${weight}`;
+    this.weightLabel.string = this.toReadableWeight(weight);
+  },
+
+  toReadableWeight(weight) {
+    if (weight < 1000) {
+      return weight;
+    } else if (weight < 1000000) {
+      const w = new Number(weight / 1000);
+      return `${w.toFixed(1)}k`;
+    } else {
+      const w = new Number(weight / 1000 / 1000);
+      return `${w.toFixed(1)}m`;
+    }
   }
 });

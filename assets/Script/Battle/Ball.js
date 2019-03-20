@@ -162,8 +162,10 @@ cc.Class({
       loser.setCustomProperties({
         pos,
         weight: loserWeight,
-        speed: loserSpeed
+        speed: loserSpeed,
+        move: null
       });
+      client.sendEvent(Constants.REBORN_EVENT, { playerId: loserId });
     }
   },
 
