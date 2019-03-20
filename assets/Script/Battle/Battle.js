@@ -4,7 +4,8 @@ const Ball = require("./Ball");
 const PlayerController = require("./PlayerController");
 const UI = require("./UI");
 const FoodSpawner = require("./FoodSpawner");
-const { randomPos } = require("./BattleHelper");
+
+const Master = require("./Master");
 
 const { initClient, getClient } = LeanCloud;
 const { Event } = Play;
@@ -52,6 +53,10 @@ cc.Class({
       await client.connect();
       cc.log("connect done");
       await client.joinOrCreateRoom("leancloud");
+      if (client.player.isMaster) {
+        this._master = this.node.addComponent(Master);
+      }
+
       this.foodSpawner.initPlay();
       this.ui.initPlay();
       // 初始化已经在房间的玩家
@@ -76,8 +81,6 @@ cc.Class({
 
   initPlayEvent() {
     const client = getClient();
-    client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
-    client.on(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft, this);
     client.on(
       Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
       this.onPlayerPropertiesChanged,
@@ -88,28 +91,6 @@ cc.Class({
 
   startTimer() {
     this._duration = Constants.GAME_DURATION;
-    setInterval(() => {
-      this._duration--;
-    }, 1000);
-  },
-
-  bornPlayer(player) {
-    // 为新玩家生成初始数据
-    // 通过面积得到体重
-    const weight = Math.pow(Constants.BORN_SIZE, 2);
-    // 根据体重得到速率
-    const speed = Constants.SPEED_FACTOR / weight;
-    // 生成随机位置
-    const pos = randomPos();
-    cc.log(`born pos: ${pos}`);
-    player.setCustomProperties({ weight, speed, pos });
-    // 通知玩家出生
-    const client = getClient();
-    // 设置房间时间
-    client.room.setCustomProperties({ duration: this._duration });
-    client.sendEvent(Constants.BORN_EVENT, {
-      playerId: player.actorId
-    });
   },
 
   newBall(player) {
@@ -122,35 +103,6 @@ cc.Class({
   },
 
   // Event
-  onPlayerRoomJoined({ newPlayer }) {
-    // 生成其他玩家
-    console.log(`${newPlayer.userId} joined room`);
-    const client = getClient();
-    if (client.player.isMaster) {
-      this.bornPlayer(newPlayer);
-    }
-  },
-
-  onPlayerRoomLeft({ leftPlayer }) {
-    // 删除玩家
-    console.log(`${leftPlayer.userId} left room`);
-    const ball = this._idToBalls[leftPlayer.actorId];
-    this.node.removeChild(ball.node);
-  },
-
-  onPlayerPropertiesChanged({ player, changedProps }) {
-    cc.log(
-      `battle player ${player.userId} changed props: ${JSON.stringify(
-        changedProps
-      )}`
-    );
-    const { move } = changedProps;
-    if (move) {
-      if (!player.isLocal) {
-        // 模拟移动
-      }
-    }
-  },
 
   onCustomEvent({ eventId, eventData }) {
     cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);
@@ -162,6 +114,8 @@ cc.Class({
       this.onKillEvent(eventData);
     } else if (eventId == Constants.REBORN_EVENT) {
       this.onRebornEvent(eventData);
+    } else if (eventId == Constants.PLAYER_LEFT_EVENT) {
+      this.onPlayerLeftEvent(eventData);
     }
   },
 
@@ -205,5 +159,11 @@ cc.Class({
     const client = getClient();
     const player = client.room.getPlayer(playerId);
     ball.init(player);
+  },
+
+  onPlayerLeftEvent(eventData) {
+    const { playerId } = eventData;
+    const ball = this._idToBalls[playerId];
+    this.node.removeChild(ball.node);
   }
 });

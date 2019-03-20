@@ -33,13 +33,12 @@ cc.Class({
   initPlay() {
     this._playerInfoItems = [];
     const client = getClient();
-    client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
-    client.on(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft, this);
     client.on(
       Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
       this.onPlayerPropertiesChanged,
       this
     );
+    client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
     // 设置玩家信息 UI
     const playerList = client.room.playerList;
     playerList.forEach(() => {
@@ -88,16 +87,18 @@ cc.Class({
 
   // Play Event
 
-  onPlayerRoomJoined({ newPlayer }) {
-    // 生成其他玩家
-    this._newPlayerInfoItem(newPlayer);
-    this._updateList();
-  },
-
-  onPlayerRoomLeft() {
-    const playerInfoItem = this._playerInfoItems.pop();
-    this.playerInfoListNode.removeChild(playerInfoItem.node);
-    this._updateList();
+  onCustomEvent({ eventId, eventData }) {
+    if (eventId == Constants.BORN_EVENT) {
+      this._newPlayerInfoItem(newPlayer);
+      this._updateList();
+    } else if (eventId === Constants.EAT_EVENT) {
+    } else if (eventId === Constants.KILL_EVENT) {
+    } else if (eventId === Constants.REBORN_EVENT) {
+    } else if (eventId === Constants.PLAYER_LEFT_EVENT) {
+      const playerInfoItem = this._playerInfoItems.pop();
+      this.playerInfoListNode.removeChild(playerInfoItem.node);
+      this._updateList();
+    }
   },
 
   onRoomPropertiesChanged({ changedProps }) {

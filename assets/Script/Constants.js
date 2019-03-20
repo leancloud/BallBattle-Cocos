@@ -33,15 +33,23 @@ const FOOD_WEIGHT = 100;
 // 圆周率
 const PI = 3.14;
 
-// 自定义事件
+// 自定义通信事件
 // 玩家出生事件
 const BORN_EVENT = "BORN_EVENT";
 // 吃食物
 const EAT_EVENT = "EAT_EVENT";
 // 杀死玩家
 const KILL_EVENT = "KILL_EVENT";
+// 玩家离开
+const PLAYER_LEFT_EVENT = "PLAYER_LEFT_EVENT";
 // 重生
 const REBORN_EVENT = "REBORN_EVENT";
+
+// 自定义逻辑事件
+// 球和食物碰撞事件
+const BALL_AND_FOOD_COLLISION_EVENT = "BALL_AND_FOOD_COLLISION_EVENT";
+// 球和球碰撞事件
+const BALL_AND_BALL_COLLISION_EVENT = "BALL_AND_BALL_COLLISION_EVENT";
 
 module.exports = {
   WIDTH,
@@ -70,5 +78,9 @@ module.exports = {
   BORN_EVENT,
   EAT_EVENT,
   KILL_EVENT,
-  REBORN_EVENT
+  PLAYER_LEFT_EVENT,
+  REBORN_EVENT,
+
+  BALL_AND_FOOD_COLLISION_EVENT,
+  BALL_AND_BALL_COLLISION_EVENT
 };
