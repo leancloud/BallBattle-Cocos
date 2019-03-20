@@ -36,13 +36,13 @@ cc.Class({
       this
     );
     const playerList = client.room.playerList;
-    playerList.forEach(p => {
-      this._newPlayerInfoItem(p);
+    playerList.forEach(() => {
+      this._newPlayerInfoItem();
     });
     this._updateList();
   },
 
-  _newPlayerInfoItem(player) {
+  _newPlayerInfoItem() {
     const playerInfoItemNode = cc.instantiate(this.playerInfoItemTemplete);
     this.playerInfoListNode.addChild(playerInfoItemNode);
     const playerInfoItem = playerInfoItemNode.getComponent(PlayerInfoItem);

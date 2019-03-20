@@ -1,7 +1,6 @@
 const Constants = require("Constants");
 const LeanCloud = require("../LeanCloud");
 const Food = require("./Food");
-const Ball = require("./Ball");
 
 const { getClient } = LeanCloud;
 const { ReceiverGroup } = Play;
@@ -85,50 +84,70 @@ cc.Class({
     }
   },
 
-  // 物理
+  // 碰撞
   onCollisionEnter(other, self) {
     const { group: otherGroup } = other.node;
-    const client = getClient();
     if (otherGroup === Constants.FOOD_GROUP) {
-      // 球碰食物
-      const { node: foodNode } = other;
-      const { x, y } = self.node.position;
-      cc.log(`collide food: (${x}, ${y})`);
-      const food = foodNode.getComponent(Food);
-      if (client.player.isMaster) {
-        // Master 用来处理逻辑同步
-        // 同步玩家属性：体重和速度
-        let { weight } = this._player.customProperties;
-        weight += Constants.FOOD_WEIGHT;
-        const speed = Constants.SPEED_FACTOR / weight;
-        this._player.setCustomProperties({ weight, speed });
-        // 通知吃食物的事件
-        const options = {
-          receiverGroup: ReceiverGroup.All
-        };
-        const bId = this.getId();
-        const fId = food.id;
-        client.sendEvent(Constants.EAT_EVENT, { bId, fId }, options);
-      }
-      foodNode.active = false;
+      this.onCollideFood(other, self);
     } else if (otherGroup === Constants.BALL_GROUP) {
-      // 球碰球
-      if (client.player.isMaster) {
-        // 比较两个球的体重，体重大者获胜
-        const { node: otherNode } = other;
-        const { node: selfNode } = self;
-        const otherBall = otherNode.getComponent(Ball);
-        const selfBall = selfNode.getComponent(Ball);
-        const otherPlayer = client.room.getPlayer(otherBall.id);
-        const selfPlayer = client.room.getPlayer(selfBall.id);
-        const { weight: otherWeight } = otherPlayer.customProperties;
-        const { weight: selfWeight } = selfPlayer.customProperties;
-        if (otherWeight > selfWeight) {
-          // TODO 对方胜利
-        } else {
-          // TODO 己方胜利
-        }
+      this.onCollideBall(other, self);
+    }
+  },
+
+  onCollideFood(other, self) {
+    const client = getClient();
+    // 球碰食物，客户端模拟
+    const { node: foodNode } = other;
+    const { x, y } = self.node.position;
+    cc.log(`collide food: (${x}, ${y})`);
+    const food = foodNode.getComponent(Food);
+    foodNode.active = false;
+    if (client.player.isMaster) {
+      // Master 用来处理逻辑同步
+      // 同步玩家属性：体重和速度
+      let { weight } = this._player.customProperties;
+      weight += Constants.FOOD_WEIGHT;
+      const speed = Constants.SPEED_FACTOR / weight;
+      this._player.setCustomProperties({ weight, speed });
+      // 通知吃食物的事件
+      const options = {
+        receiverGroup: ReceiverGroup.All
+      };
+      const bId = this.getId();
+      const fId = food.id;
+      client.sendEvent(Constants.EAT_EVENT, { bId, fId }, options);
+    }
+  },
+
+  onCollideBall(other, self) {
+    const client = getClient();
+    // 球碰球
+    if (client.player.isMaster) {
+      // 比较两个球的体重，体重大者获胜
+      const { node: otherNode } = other;
+      const { node: selfNode } = self;
+      cc.log(`${otherNode.name}, ${selfNode.name}`);
+      const otherBall = otherNode.getComponent("Ball");
+      const selfBall = selfNode.getComponent("Ball");
+      const otherPlayer = client.room.getPlayer(otherBall.getId());
+      const selfPlayer = client.room.getPlayer(selfBall.getId());
+      const { weight: otherWeight } = otherPlayer.customProperties;
+      const { weight: selfWeight } = selfPlayer.customProperties;
+      let winner, loser;
+      if (otherWeight > selfWeight) {
+        // 对方胜利
+        winner = otherPlayer;
+        loser = selfPlayer;
+      } else {
+        // 己方胜利
+        winner = selfPlayer;
+        loser = otherPlayer;
       }
+      const { actorId: winnerId } = winner;
+      const { actorId: loserId } = loser;
+      const weight = otherWeight + selfWeight;
+      client.sendEvent(Constants.KILL_EVENT, { winnerId, loserId });
+      winner.setCustomProperties({ weight });
     }
   },
 

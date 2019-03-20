@@ -148,6 +148,8 @@ cc.Class({
       this.onBornEvent(eventData);
     } else if (eventId === Constants.EAT_EVENT) {
       this.onEatEvent(eventData);
+    } else if (eventId === Constants.KILL_EVENT) {
+      this.onKillEvent(eventData);
     }
   },
 
@@ -174,5 +176,10 @@ cc.Class({
     cc.log(`${bId} eat food: ${fId}`);
     const ball = this._idToBalls[bId];
     ball.sync();
+  },
+
+  onKillEvent(eventData) {
+    const { winnerId, loserId } = eventData;
+    // TODO 杀死 Ball
   }
 });
