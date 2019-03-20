@@ -41,9 +41,9 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.6625365290676442,
-      "y": 0.6625365290676442,
-      "z": 0.6625365290676442
+      "x": 0.6329098409483671,
+      "y": 0.6329098409483671,
+      "z": 0.6329098409483671
     },
     "_quat": {
       "__type__": "cc.Quat",
@@ -2011,7 +2011,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 58.72,
+      "width": 0,
       "height": 30
     },
     "_anchorPoint": {
@@ -2058,8 +2058,8 @@
     "_srcBlendFactor": 1,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "Label",
-    "_N$string": "Label",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 24,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -2083,7 +2083,7 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 8,
-    "_left": 69.57500000000002,
+    "_left": 98.93500000000002,
     "_right": 0,
     "_top": 0,
     "_bottom": 0,
@@ -2197,6 +2197,9 @@
     },
     "myWeightLabel": {
       "__id__": 41
+    },
+    "timeLabel": {
+      "__id__": 47
     },
     "_id": "1crBWrhbhCD5OZKfWOu/dy"
   },

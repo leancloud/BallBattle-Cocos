@@ -1,5 +1,6 @@
 const LeanCloud = require("../LeanCloud");
 const PlayerInfoItem = require("./PlayerInfoItem");
+const Constants = require("../Constants");
 
 const { getClient } = LeanCloud;
 const { Event } = Play;
@@ -22,6 +23,10 @@ cc.Class({
     myWeightLabel: {
       type: cc.Label,
       default: null
+    },
+    timeLabel: {
+      type: cc.Label,
+      default: null
     }
   },
 
@@ -35,11 +40,24 @@ cc.Class({
       this.onPlayerPropertiesChanged,
       this
     );
+    // 设置玩家信息 UI
     const playerList = client.room.playerList;
     playerList.forEach(() => {
       this._newPlayerInfoItem();
     });
     this._updateList();
+  },
+
+  startTimer() {
+    // 游戏时间
+    const client = getClient();
+    this._duration =
+      client.room.customProperties.duration || Constants.GAME_DURATION;
+    // 更新游戏时间
+    setInterval(() => {
+      this._duration--;
+      this.timeLabel.string = `${this._duration}`;
+    }, 1000);
   },
 
   _newPlayerInfoItem() {
@@ -80,6 +98,14 @@ cc.Class({
     const playerInfoItem = this._playerInfoItems.pop();
     this.playerInfoListNode.removeChild(playerInfoItem.node);
     this._updateList();
+  },
+
+  onRoomPropertiesChanged({ changedProps }) {
+    const { duration } = changedProps;
+    if (duration) {
+      // 同步计时器
+      this._duration = duration;
+    }
   },
 
   onPlayerPropertiesChanged({ player, changedProps }) {

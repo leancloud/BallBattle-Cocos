@@ -1,6 +1,7 @@
 const Constants = require("Constants");
 const LeanCloud = require("../LeanCloud");
 const Food = require("./Food");
+const { randomPos } = require("./BattleHelper");
 
 const { getClient } = LeanCloud;
 const { ReceiverGroup } = Play;
@@ -143,11 +144,26 @@ cc.Class({
         winner = selfPlayer;
         loser = otherPlayer;
       }
+      // 通知胜利者
       const { actorId: winnerId } = winner;
       const { actorId: loserId } = loser;
-      const weight = otherWeight + selfWeight;
+      const winnerWeight = otherWeight + selfWeight;
+      const winnerSpeed = Constants.SPEED_FACTOR / winnerWeight;
       client.sendEvent(Constants.KILL_EVENT, { winnerId, loserId });
-      winner.setCustomProperties({ weight });
+      winner.setCustomProperties({ winnerWeight, winnerSpeed });
+      // 重置失败者
+      // 通过面积得到体重
+      const loserWeight = Math.pow(Constants.BORN_SIZE, 2);
+      // 根据体重得到速率
+      const loserSpeed = Constants.SPEED_FACTOR / loserWeight;
+      // 生成随机位置
+      const pos = randomPos();
+      cc.log(`born pos: ${pos}`);
+      loser.setCustomProperties({
+        pos,
+        weight: loserWeight,
+        speed: loserSpeed
+      });
     }
   },
 

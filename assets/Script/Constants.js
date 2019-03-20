@@ -18,6 +18,10 @@ const SPAWN_FOOD_DURATION = 10000;
 const BALL_GROUP = "ball";
 const FOOD_GROUP = "food";
 
+// 游戏时长
+const GAME_DURATION = 120;
+// 游戏时长更新频率
+const SYNC_GAME_DURATION = 10000;
 // 初始尺寸
 const BORN_SIZE = 48;
 // 速度因子，实际速度 = 速度因子 / 体重
@@ -53,6 +57,8 @@ module.exports = {
   BALL_GROUP,
   FOOD_GROUP,
 
+  GAME_DURATION,
+  SYNC_GAME_DURATION,
   BORN_SIZE,
   SPEED_FACTOR,
   MIN_SPEED,

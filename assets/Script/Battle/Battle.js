@@ -63,6 +63,7 @@ cc.Class({
       // 判断自己是否是 Master，来确定是否需要生成食物
       if (client.player.isMaster) {
         cc.log("I am master");
+        this.startTimer();
         this.foodSpawner.spawnFoodsData(Constants.INIT_FOOD_COUNT);
         this.bornPlayer(client.player);
       } else {
@@ -85,6 +86,13 @@ cc.Class({
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
+  startTimer() {
+    this._duration = Constants.GAME_DURATION;
+    setInterval(() => {
+      this._duration--;
+    }, 1000);
+  },
+
   bornPlayer(player) {
     // 为新玩家生成初始数据
     // 通过面积得到体重
@@ -97,6 +105,8 @@ cc.Class({
     player.setCustomProperties({ weight, speed, pos });
     // 通知玩家出生
     const client = getClient();
+    // 设置房间时间
+    client.room.setCustomProperties({ duration: this._duration });
     client.sendEvent(Constants.BORN_EVENT, {
       playerId: player.actorId
     });
@@ -168,6 +178,7 @@ cc.Class({
       const cameraNode = cc.find("Canvas/Main Camera");
       cameraNode.removeFromParent();
       ball.node.addChild(cameraNode);
+      this.ui.startTimer();
     }
   },
 
