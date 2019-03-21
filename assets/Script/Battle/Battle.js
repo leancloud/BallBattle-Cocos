@@ -6,6 +6,8 @@ const UI = require("./UI");
 const FoodSpawner = require("./FoodSpawner");
 
 const Master = require("./Master");
+const BallController = require("./BallController");
+const BallSimulator = require("./BallSimulator");
 
 const { initClient, getClient } = LeanCloud;
 const { Event } = Play;
@@ -128,13 +130,10 @@ cc.Class({
     const ball = this.newBall(player);
     if (player.isLocal) {
       // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
-      const playerCtrl = ball.node.addComponent(PlayerController);
-      playerCtrl.hero = ball;
-      // 设置摄像机跟随
-      const cameraNode = cc.find("Canvas/Main Camera");
-      cameraNode.removeFromParent();
-      ball.node.addChild(cameraNode);
+      ball.addComponent(BallController);
       this.ui.startTimer();
+    } else {
+      ball.addComponent(BallSimulator);
     }
   },
 

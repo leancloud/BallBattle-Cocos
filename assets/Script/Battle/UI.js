@@ -131,7 +131,7 @@ cc.Class({
     client.off(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined);
     client.off(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft);
     client.off(
-      Event.Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
+      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
       this.onPlayerPropertiesChanged
     );
   }
