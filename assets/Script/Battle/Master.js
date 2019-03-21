@@ -16,16 +16,11 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   start() {
+    this._idToFoods = {};
     const client = getClient();
     //
     client.on(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined, this);
     client.on(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft, this);
-    client.on(
-      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
-      this.onPlayerPropertiesChanged,
-      this
-    );
-    client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
     //
     this.node.on(
       Constants.BALL_AND_FOOD_COLLISION_EVENT,

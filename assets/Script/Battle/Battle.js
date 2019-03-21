@@ -1,7 +1,6 @@
 const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const Ball = require("./Ball");
-const PlayerController = require("./PlayerController");
 const UI = require("./UI");
 const FoodSpawner = require("./FoodSpawner");
 
@@ -61,12 +60,7 @@ cc.Class({
 
       this.foodSpawner.initPlay();
       this.ui.initPlay();
-      // 初始化已经在房间的玩家
-      client.room.playerList.forEach(player => {
-        if (!player.isLocal) {
-          this.newBall(player);
-        }
-      });
+
       // 判断自己是否是 Master，来确定是否需要生成食物
       if (client.player.isMaster) {
         cc.log("I am master");
@@ -83,11 +77,6 @@ cc.Class({
 
   initPlayEvent() {
     const client = getClient();
-    client.on(
-      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
-      this.onPlayerPropertiesChanged,
-      this
-    );
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
@@ -132,6 +121,12 @@ cc.Class({
       // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
       ball.addComponent(BallController);
       this.ui.startTimer();
+      // 初始化已经在房间的玩家
+      client.room.playerList.forEach(p => {
+        if (!p.isLocal) {
+          this.newBall(p);
+        }
+      });
     } else {
       ball.addComponent(BallSimulator);
     }
