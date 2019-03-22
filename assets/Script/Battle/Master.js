@@ -3,6 +3,7 @@ const Constants = require("../Constants");
 const { randomPos } = require("./BattleHelper");
 
 const { getClient } = LeanCloud;
+const { Event } = Play;
 
 /**
  * 游戏逻辑控制器
@@ -16,6 +17,7 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   start() {
+    cc.log("I am master");
     this._idToFoods = {};
     const client = getClient();
     //
@@ -46,14 +48,14 @@ cc.Class({
       this._duration--;
     }, 1000);
 
-    // 同步食物
+    // 同步食物，保存至服务端的 Room Properties 中
     setInterval(() => {
       const foods = Object.values(this._idToFoods);
       console.log(`current foods count: ${foods.length}`);
       const roomFoods = [];
       foods.forEach(f => {
         const { id, type } = f;
-        const { x, y } = f.node.position;
+        const { x, y } = f;
         roomFoods.push({
           id,
           type,
@@ -65,13 +67,38 @@ cc.Class({
         roomFoods
       });
     }, Constants.SYNC_FOOD_DURATION);
+    // 生成食物
+    this.spawnFoodsData(Constants.INIT_FOOD_COUNT);
+    // 补充食物
     setInterval(() => {
-      // TODO 补充食物
-      const foods = Object.values(this._idToFoods);
-      const spawnFoodCount = Constants.INIT_FOOD_COUNT - foods.length;
+      const fIds = Object.keys(this._idToFoods);
+      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
       cc.log(`respawn: ${spawnFoodCount}`);
       this.spawnFoodsData(spawnFoodCount);
     }, Constants.SPAWN_FOOD_DURATION);
+
+    // 生成自己的玩家数据
+    this.newPlayer(client.player);
+  },
+
+  newPlayer(player) {
+    cc.log(`new player: ${player.userId}`);
+    // 为新玩家生成初始数据
+    // 通过面积得到体重
+    const weight = Math.pow(Constants.BORN_SIZE, 2);
+    // 根据体重得到速率
+    const speed = Constants.SPEED_FACTOR / weight;
+    // 生成随机位置
+    const pos = randomPos();
+    cc.log(`born pos: ${pos}`);
+    player.setCustomProperties({ weight, speed, pos });
+    // 通知玩家出生
+    const client = getClient();
+    // 设置房间时间
+    client.room.setCustomProperties({ duration: this._duration });
+    client.sendEvent(Constants.BORN_EVENT, {
+      playerId: player.actorId
+    });
   },
 
   /**
@@ -80,21 +107,18 @@ cc.Class({
    */
   spawnFoodsData(count) {
     const client = getClient();
-    const roomFoods = [];
     // 只生成数据
     let { roomFoodId } = client.room.customProperties;
-    if (!roomFoodId) {
-      roomFoodId = 0;
-    }
+    roomFoodId = roomFoodId || 0;
     // 暂定初始生成 100 个食物
     for (let i = 0; i < count; i++) {
       const id = roomFoodId + i;
-      const type =
-        parseInt(Math.random() * 1000000) % this.foodTempleteList.length;
+      const type = parseInt(Math.random() * 1000000) % 3;
       const { x, y } = randomPos();
-      roomFoods.push({ id, type, x, y });
+      this._idToFoods[id] = { id, type, x, y };
     }
     roomFoodId += count;
+    const roomFoods = Object.values(this._idToFoods);
     // 此时可能导致消息很大
     client.room.setCustomProperties({
       roomFoodId,
@@ -105,22 +129,24 @@ cc.Class({
   // Cocos Events
   onBallAndFoodCollision(event) {
     const { ball, food } = event.detail;
+    // 移除 food
+    delete this._idToFoods[food.id];
     // Master 用来处理逻辑同步
     // 同步玩家属性：体重和速度
-    let { weight } = food._player.customProperties;
+    const { player } = ball;
+    let { weight } = player.customProperties;
     weight += Constants.FOOD_WEIGHT;
     const speed = Constants.SPEED_FACTOR / weight;
-    this._player.setCustomProperties({ weight, speed });
+    player.setCustomProperties({ weight, speed });
     // 通知吃食物的事件
-    const options = {
-      receiverGroup: ReceiverGroup.All
-    };
-    const bId = ball.getId();
-    const fId = food.id;
-    client.sendEvent(Constants.EAT_EVENT, { bId, fId }, options);
+    const { actorId: bId } = player;
+    const { id: fId } = food;
+    const client = getClient();
+    client.sendEvent(Constants.EAT_EVENT, { bId, fId });
   },
 
   onBallAndBallCollision(event) {
+    const client = getClient();
     const { b1Node, b2Node } = event.detail;
     // 比较两个球的体重，体重大者获胜
     cc.log(`${otherNode.name}, ${selfNode.name}`);
@@ -167,30 +193,17 @@ cc.Class({
   // Play Events
   // 玩家加入房间
   onPlayerRoomJoined({ newPlayer }) {
+    cc.log("new player joined");
     // 生成其他玩家
-    console.log(`${newPlayer.userId} joined room`);
-    // 为新玩家生成初始数据
-    // 通过面积得到体重
-    const weight = Math.pow(Constants.BORN_SIZE, 2);
-    // 根据体重得到速率
-    const speed = Constants.SPEED_FACTOR / weight;
-    // 生成随机位置
-    const pos = randomPos();
-    cc.log(`born pos: ${pos}`);
-    player.setCustomProperties({ weight, speed, pos });
-    // 通知玩家出生
-    const client = getClient();
-    // 设置房间时间
-    client.room.setCustomProperties({ duration: this._duration });
-    client.sendEvent(Constants.BORN_EVENT, {
-      playerId: player.actorId
-    });
+    cc.log(`${newPlayer.userId} joined room`);
+    this.newPlayer(newPlayer);
   },
 
   // 玩家离开房间
   onPlayerRoomLeft({ leftPlayer }) {
     // 删除玩家
-    console.log(`${leftPlayer.userId} left room`);
+    cc.log(`${leftPlayer.userId} left room`);
+    const client = getClient();
     // 转换成事件通知客户端
     client.sendEvent(Constants.PLAYER_LEFT_EVENT, {
       playerId: leftPlayer.actorId

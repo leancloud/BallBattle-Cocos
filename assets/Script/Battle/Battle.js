@@ -48,28 +48,17 @@ cc.Class({
     const userId = `${parseInt(Math.random() * 1000000)}`;
     initClient(userId);
     const client = getClient();
-    this.initPlayEvent();
 
     try {
       await client.connect();
       cc.log("connect done");
       await client.joinOrCreateRoom("leancloud");
+      this.initPlayEvent();
       if (client.player.isMaster) {
         this._master = this.node.addComponent(Master);
       }
-
       this.foodSpawner.initPlay();
       this.ui.initPlay();
-
-      // 判断自己是否是 Master，来确定是否需要生成食物
-      if (client.player.isMaster) {
-        cc.log("I am master");
-        this.startTimer();
-        this.foodSpawner.spawnFoodsData(Constants.INIT_FOOD_COUNT);
-        this.bornPlayer(client.player);
-      } else {
-        this.foodSpawner.spawnFoodNodes();
-      }
     } catch (err) {
       cc.log(err);
     }
@@ -86,6 +75,8 @@ cc.Class({
 
   newBall(player) {
     const ballNode = cc.instantiate(this.ballTemplate);
+    const { x, y } = player.customProperties.pos;
+    ballNode.position = cc.v2(x, y);
     const ball = ballNode.getComponent(Ball);
     ball.init(player);
     this._idToBalls[player.actorId] = ball;
@@ -116,18 +107,18 @@ cc.Class({
     const client = getClient();
     const { playerId } = eventData;
     const player = client.room.getPlayer(playerId);
-    const ball = this.newBall(player);
     if (player.isLocal) {
-      // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
-      ball.addComponent(BallController);
       this.ui.startTimer();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(p => {
-        if (!p.isLocal) {
-          this.newBall(p);
+        const ball = this.newBall(p);
+        if (p.isLocal) {
+          // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
+          ball.addComponent(BallController);
         }
       });
     } else {
+      const ball = this.newBall(player);
       ball.addComponent(BallSimulator);
     }
   },

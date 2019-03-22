@@ -22,12 +22,19 @@ cc.Class({
     this.player = player;
   },
 
+  sync() {
+    // 计算尺寸
+    const { weight } = this.player.customProperties;
+    const scale = Math.sqrt(weight) / Constants.BORN_SIZE;
+    this.node.scale = cc.v2(scale, scale);
+  },
+
   // LIFE-CYCLE CALLBACKS:
 
   // onLoad () {},
 
   start() {
-    this.nameLabel.string = this._player.userId;
+    this.nameLabel.string = this.player.userId;
   },
 
   update(dt) {
@@ -53,31 +60,38 @@ cc.Class({
     const food = foodNode.getComponent(Food);
     foodNode.active = false;
     // 交由 Master 处理
-    this.node.dispatchEvent(
-      new cc.Event.EventCustom(Constants.BALL_AND_FOOD_COLLISION_EVENT, {
-        ball: this,
-        food
-      })
+    const event = new cc.Event.EventCustom(
+      Constants.BALL_AND_FOOD_COLLISION_EVENT,
+      true
     );
+    event.detail = {
+      ball: this,
+      food
+    };
+    this.node.dispatchEvent(event);
   },
 
   onCollideBall(other, self) {
     const { node: b1Node } = other;
     const { node: b2Node } = self;
-    this.node.dispatchEvent(
-      new cc.Event.EventCustom(Constants.BALL_AND_BALL_COLLISION_EVENT, {
-        b1Node,
-        b2Node
-      })
+    const event = new cc.Event.EventCustom(
+      Constants.BALL_AND_BALL_COLLISION_EVENT,
+      true
     );
+    event.detail = {
+      b1Node,
+      b2Node
+    };
+    this.node.dispatchEvent(event);
   },
 
   getId() {
-    return this._player.actorId;
+    return this.player.actorId;
   },
 
   getSpeed() {
-    return this._speed;
+    const { speed } = this.player.customProperties;
+    return speed;
   },
 
   getWeight() {

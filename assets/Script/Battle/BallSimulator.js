@@ -1,3 +1,6 @@
+const Ball = require("Ball");
+const Constants = require("../Constants");
+
 /**
  * 球模拟器，其他客户端需要添加组件，用于同步其他客户端的运动行为
  */
@@ -29,14 +32,14 @@ cc.Class({
   },
 
   update(dt) {
-    const move = this._player.customProperties.move;
+    const { move, speed } = this._ball.player.customProperties;
     if (move) {
       // 模拟计算当前应该所处位置
       const now = Date.now();
       let delta = now - move.t;
       const start = cc.v2(move.p.x, move.p.y);
       let direction = cc.v2(move.d.x, move.d.y).normalize();
-      const end = start.add(direction.mul(this._speed * delta));
+      const end = start.add(direction.mul(speed * delta));
       // 计算当前位置到「应该位置」的方向
       const { x, y } = this.node.position;
       const curPos = cc.v2(x, y);
@@ -48,7 +51,7 @@ cc.Class({
       // 计算出校正后的方向
       direction = end.sub(curPos).normalize();
       // 计算出校正后的方向偏移
-      delta = direction.mul(this._speed * dt);
+      delta = direction.mul(speed * dt);
       // 计算当前新的位置
       const newPosition = curPos.add(delta);
       this.node.position = newPosition;

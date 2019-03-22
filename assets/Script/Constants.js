@@ -10,9 +10,9 @@ const DISTANCE_MAG = 2;
 // 初始生成食物数量
 const INIT_FOOD_COUNT = 200;
 // 同步食物时长
-const SYNC_FOOD_DURATION = 2000;
+const SYNC_FOOD_DURATION = 200000;
 // 补充食物时长
-const SPAWN_FOOD_DURATION = 10000;
+const SPAWN_FOOD_DURATION = 1000000;
 
 // 节点组
 const BALL_GROUP = "ball";

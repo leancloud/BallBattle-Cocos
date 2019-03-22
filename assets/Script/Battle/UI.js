@@ -89,7 +89,7 @@ cc.Class({
 
   onCustomEvent({ eventId, eventData }) {
     if (eventId == Constants.BORN_EVENT) {
-      this._newPlayerInfoItem(newPlayer);
+      this._newPlayerInfoItem();
       this._updateList();
     } else if (eventId === Constants.EAT_EVENT) {
     } else if (eventId === Constants.KILL_EVENT) {
@@ -128,11 +128,5 @@ cc.Class({
 
   onDestroy() {
     const client = getClient();
-    client.off(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined);
-    client.off(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft);
-    client.off(
-      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
-      this.onPlayerPropertiesChanged
-    );
   }
 });
