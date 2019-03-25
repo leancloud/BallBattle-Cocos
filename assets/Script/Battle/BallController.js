@@ -5,27 +5,20 @@ const LeanCloud = require("../LeanCloud");
 const { getClient } = LeanCloud;
 
 /**
- * 玩家控制器
+ * 球控制器，当前客户端需要添加组件，由用户输入直接移动，并触发移动同步
  */
 cc.Class({
   extends: cc.Component,
 
-  properties: {
-    hero: {
-      type: Ball,
-      default: null
-    },
-    // 移动速度
-    speed: 100,
-    direction: cc.Vec2.ZERO,
-    running: false
-  },
+  properties: {},
 
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    this._ball = this.node.getComponent(Ball);
+    this._direction = cc.Vec2.ZERO;
   },
 
   onDestroy() {
@@ -33,28 +26,28 @@ cc.Class({
     cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
   },
 
-  start() {},
+  start() {
+    this._cameraNode = cc.find("Canvas/Main Camera");
+  },
 
   update(dt) {
-    if (!this.running) {
-      return;
-    }
-    const speed = this.hero.getSpeed();
-    const delta = this.direction.normalize().mul(speed * dt);
-    const heroNode = this.hero.node;
-    const position = heroNode.position.add(delta);
+    const speed = this._ball.getSpeed();
+    const delta = this._direction.normalize().mul(speed * dt);
+    const position = this.node.position.add(delta);
     const { x, y } = position;
     const { LEFT, RIGHT, TOP, BOTTOM } = Constants;
     const newPosition = cc.v2(
       Math.min(Math.max(x, LEFT), RIGHT),
       Math.min(Math.max(y, BOTTOM), TOP)
     );
-    heroNode.position = newPosition;
+    this.node.position = newPosition;
+    // 设置摄像机跟随
+    this._cameraNode.position = this.node.position;
   },
 
   onKeyDown(event) {
     this.running = true;
-    let dir = this.direction.clone();
+    let dir = this._direction.clone();
     switch (event.keyCode) {
       case cc.macro.KEY.a:
       case cc.macro.KEY.left:
@@ -75,11 +68,11 @@ cc.Class({
       default:
         break;
     }
-    this.synchMove(dir);
+    this.synchMove(dir.normalize());
   },
 
   onKeyUp(event) {
-    let dir = this.direction.clone();
+    let dir = this._direction.clone();
     switch (event.keyCode) {
       case cc.macro.KEY.a:
       case cc.macro.KEY.left:
@@ -96,16 +89,16 @@ cc.Class({
       default:
         break;
     }
-    this.synchMove(dir);
+    this.synchMove(dir.normalize());
   },
 
   synchMove(dir) {
-    if (dir.fuzzyEquals(this.direction, 0.01)) {
+    if (dir.fuzzyEquals(this._direction, 0.01)) {
       return;
     }
-    this.direction = dir;
+    this._direction = dir;
     const { x, y } = this.node.position;
-    const { x: dx, y: dy } = this.direction;
+    const { x: dx, y: dy } = this._direction;
     const client = getClient();
     client.player.setCustomProperties({
       move: { p: { x, y }, d: { x: dx, y: dy }, t: Date.now() }
