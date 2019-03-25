@@ -149,7 +149,7 @@ cc.Class({
     const client = getClient();
     const { b1Node, b2Node } = event.detail;
     // 比较两个球的体重，体重大者获胜
-    cc.log(`${otherNode.name}, ${selfNode.name}`);
+    cc.log(`${b1Node.name}, ${b2Node.name}`);
     const ball1 = b1Node.getComponent("Ball");
     const ball2 = b2Node.getComponent("Ball");
     const b1Player = client.room.getPlayer(ball1.getId());

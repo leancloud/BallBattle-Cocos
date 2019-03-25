@@ -39,12 +39,13 @@ cc.Class({
       this
     );
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
-    // 设置玩家信息 UI
+    // 设置已有玩家信息 UI
     const playerList = client.room.playerList;
-    playerList.forEach(() => {
-      this._newPlayerInfoItem();
+    playerList.forEach(player => {
+      if (!player.isLocal) {
+        this._newPlayerInfoItem();
+      }
     });
-    this._updateList();
   },
 
   startTimer() {

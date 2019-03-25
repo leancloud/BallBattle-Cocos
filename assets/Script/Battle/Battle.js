@@ -2,7 +2,7 @@ const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const Ball = require("./Ball");
 const UI = require("./UI");
-const FoodSpawner = require("./FoodSpawner");
+const Food = require("./Food");
 
 const Master = require("./Master");
 const BallController = require("./BallController");
@@ -22,9 +22,9 @@ cc.Class({
       type: cc.Prefab,
       default: null
     },
-    foodSpawner: {
-      type: FoodSpawner,
-      default: null
+    foodTempleteList: {
+      type: cc.Prefab,
+      default: []
     },
     ui: {
       type: UI,
@@ -40,6 +40,7 @@ cc.Class({
 
   onLoad() {
     this._idToBalls = {};
+    this._idToFoods = {};
     const manager = cc.director.getCollisionManager();
     manager.enabled = true;
   },
@@ -57,7 +58,6 @@ cc.Class({
       if (client.player.isMaster) {
         this._master = this.node.addComponent(Master);
       }
-      this.foodSpawner.initPlay();
       this.ui.initPlay();
     } catch (err) {
       cc.log(err);
@@ -66,6 +66,11 @@ cc.Class({
 
   initPlayEvent() {
     const client = getClient();
+    client.on(
+      Event.ROOM_CUSTOM_PROPERTIES_CHANGED,
+      this.onRoomPropertiesChanged,
+      this
+    );
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
@@ -84,7 +89,36 @@ cc.Class({
     return ball;
   },
 
+  spawnFoodNodes() {
+    const client = getClient();
+    const { roomFoods } = client.room.customProperties;
+    cc.log(`spawn ${roomFoods.length} foods`);
+    if (roomFoods) {
+      roomFoods.forEach(roomFood => {
+        const { id, type, x, y } = roomFood;
+        if (this._idToFoods[id]) {
+          return;
+        }
+        const foodNode = cc.instantiate(this.foodTempleteList[type]);
+        foodNode.position = cc.v2(x, y);
+        this.node.addChild(foodNode);
+        const food = foodNode.getComponent(Food);
+        food.id = id;
+        food.type = type;
+        this._idToFoods[id] = food;
+      });
+    }
+  },
+
   // Event
+
+  onRoomPropertiesChanged({ changedProps }) {
+    console.log(`room changed props: ${JSON.stringify(changedProps)}`);
+    const { roomFoods } = changedProps;
+    if (roomFoods) {
+      this.spawnFoodNodes(roomFoods);
+    }
+  },
 
   onCustomEvent({ eventId, eventData }) {
     cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);
@@ -105,9 +139,12 @@ cc.Class({
 
   onBornEvent(eventData) {
     const client = getClient();
+    // 初始化战场
+    this.spawnFoodNodes();
     const { playerId } = eventData;
     const player = client.room.getPlayer(playerId);
     if (player.isLocal) {
+      // 如果是当前客户端，表示游戏开始
       this.ui.startTimer();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(p => {
@@ -118,6 +155,7 @@ cc.Class({
         }
       });
     } else {
+      // 如果不是当前客户端，表示有其他玩家加入了游戏
       const ball = this.newBall(player);
       ball.addComponent(BallSimulator);
     }
@@ -128,6 +166,9 @@ cc.Class({
     cc.log(`${bId} eat food: ${fId}`);
     const ball = this._idToBalls[bId];
     ball.sync();
+    const food = this._idToFoods[fId];
+    this.node.removeChild(food.node);
+    delete this._idToFoods[fId];
   },
 
   onKillEvent(eventData) {
