@@ -56,9 +56,9 @@ cc.Class({
       await client.joinOrCreateRoom("leancloud");
       this.initPlayEvent();
       if (client.player.isMaster) {
-        this._master = this.node.addComponent(Master);
+        const master = this.node.addComponent(Master);
+        master.init();
       }
-      this.ui.initPlay();
     } catch (err) {
       cc.log(err);
     }
@@ -66,6 +66,7 @@ cc.Class({
 
   initPlayEvent() {
     const client = getClient();
+    client.on(Event.MASTER_SWITCHED, this.onMasterSwitched, this);
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
@@ -106,6 +107,14 @@ cc.Class({
   },
 
   // Event
+
+  onMasterSwitched({ newMaster }) {
+    if (newMaster.isLocal) {
+      cc.log("I am the new master");
+      const master = this.node.addComponent(Master);
+      master.switch();
+    }
+  },
 
   onCustomEvent({ eventId, eventData }) {
     cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);

@@ -16,7 +16,7 @@ cc.Class({
 
   // LIFE-CYCLE CALLBACKS:
 
-  start() {
+  onLoad() {
     cc.log("I am master");
     this._idToFoods = {};
     const client = getClient();
@@ -34,20 +34,34 @@ cc.Class({
       this.onBallAndBallCollision,
       this
     );
+  },
 
-    // 判断游戏刚刚开始，还是切换了 Master
-    let { duration } = client.room.customProperties;
-    if (duration === undefined) {
-      // 新游戏，对游戏进行初始化
-      duration = Constants.GAME_DURATION;
-      client.room.setCustomProperties({ duration });
-    } else {
-      // 继续游戏
-    }
+  init() {
+    const client = getClient();
+    const duration = Constants.GAME_DURATION;
+    client.room.setCustomProperties({ duration });
     setInterval(() => {
       this._duration--;
     }, 1000);
+    this.spawnFoodsData(Constants.INIT_FOOD_COUNT);
+    // 补充食物
+    setInterval(() => {
+      const fIds = Object.keys(this._idToFoods);
+      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
+      cc.log(`respawn: ${spawnFoodCount}`);
+      this.spawnFoodsData(spawnFoodCount);
+    }, Constants.SPAWN_FOOD_DURATION);
+    // 生成自己的玩家数据
+    this.newPlayer(client.player);
+  },
 
+  switch() {
+    const client = getClient();
+    let { duration } = client.room.customProperties;
+    client.room.setCustomProperties({ duration });
+    setInterval(() => {
+      this._duration--;
+    }, 1000);
     // 同步食物，保存至服务端的 Room Properties 中
     setInterval(() => {
       const foods = Object.values(this._idToFoods);
@@ -67,8 +81,6 @@ cc.Class({
         roomFoods
       });
     }, Constants.SYNC_FOOD_DURATION);
-    // 生成食物
-    this.spawnFoodsData(Constants.INIT_FOOD_COUNT);
     // 补充食物
     setInterval(() => {
       const fIds = Object.keys(this._idToFoods);
@@ -76,9 +88,6 @@ cc.Class({
       cc.log(`respawn: ${spawnFoodCount}`);
       this.spawnFoodsData(spawnFoodCount);
     }, Constants.SPAWN_FOOD_DURATION);
-
-    // 生成自己的玩家数据
-    this.newPlayer(client.player);
   },
 
   newPlayer(player) {
