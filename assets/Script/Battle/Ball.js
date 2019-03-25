@@ -22,11 +22,21 @@ cc.Class({
     this.player = player;
   },
 
-  sync() {
+  eat() {
     // 计算尺寸
-    const { weight } = this.player.customProperties;
+    const { weight, pos } = this.player.customProperties;
     const scale = Math.sqrt(weight) / Constants.BORN_SIZE;
     this.node.scale = cc.v2(scale, scale);
+  },
+
+  reborn() {
+    // 计算尺寸
+    const { weight, pos } = this.player.customProperties;
+    const scale = Math.sqrt(weight) / Constants.BORN_SIZE;
+    this.node.scale = cc.v2(scale, scale);
+    // 位置
+    const { x, y } = pos;
+    this.node.position = cc.v2(x, y);
   },
 
   // LIFE-CYCLE CALLBACKS:

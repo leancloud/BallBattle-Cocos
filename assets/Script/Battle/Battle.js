@@ -165,7 +165,7 @@ cc.Class({
     const { bId, fId } = eventData;
     cc.log(`${bId} eat food: ${fId}`);
     const ball = this._idToBalls[bId];
-    ball.sync();
+    ball.eat();
     const food = this._idToFoods[fId];
     this.node.removeChild(food.node);
     delete this._idToFoods[fId];
@@ -182,9 +182,7 @@ cc.Class({
     const { playerId } = eventData;
     const ball = this._idToBalls[playerId];
     ball.node.active = true;
-    const client = getClient();
-    const player = client.room.getPlayer(playerId);
-    ball.init(player);
+    ball.reborn();
   },
 
   onPlayerLeftEvent(eventData) {
