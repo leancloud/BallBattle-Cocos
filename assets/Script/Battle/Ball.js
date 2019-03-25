@@ -24,7 +24,7 @@ cc.Class({
 
   eat() {
     // 计算尺寸
-    const { weight, pos } = this.player.customProperties;
+    const { weight } = this.player.customProperties;
     const scale = Math.sqrt(weight) / Constants.BORN_SIZE;
     this.node.scale = cc.v2(scale, scale);
   },

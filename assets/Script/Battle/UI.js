@@ -30,27 +30,19 @@ cc.Class({
     }
   },
 
-  initPlay() {
+  /**
+   * 初始化 UI
+   */
+  initUI() {
     this._playerInfoItems = [];
     const client = getClient();
-    client.on(
-      Event.PLAYER_CUSTOM_PROPERTIES_CHANGED,
-      this.onPlayerPropertiesChanged,
-      this
-    );
-    client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
-    // 设置已有玩家信息 UI
     const playerList = client.room.playerList;
     playerList.forEach(player => {
-      if (!player.isLocal) {
-        this._newPlayerInfoItem();
-      }
+      const item = this._newPlayerInfoItem();
+      this._playerInfoItems.push(item);
     });
-  },
-
-  startTimer() {
-    // 游戏时间
-    const client = getClient();
+    this.updateList();
+    // 游戏计时
     this._duration =
       client.room.customProperties.duration || Constants.GAME_DURATION;
     // 更新游戏时间
@@ -60,14 +52,10 @@ cc.Class({
     }, 1000);
   },
 
-  _newPlayerInfoItem() {
-    const playerInfoItemNode = cc.instantiate(this.playerInfoItemTemplete);
-    this.playerInfoListNode.addChild(playerInfoItemNode);
-    const playerInfoItem = playerInfoItemNode.getComponent(PlayerInfoItem);
-    this._playerInfoItems.push(playerInfoItem);
-  },
-
-  _updateList() {
+  /**
+   * 刷新玩家列表
+   */
+  updateList() {
     const client = getClient();
     const playerList = client.room.playerList;
     const sortedPlayerList = playerList.sort((p1, p2) => {
@@ -86,48 +74,32 @@ cc.Class({
     this.myWeightLabel.string = `当前体重: ${myWeight}g`;
   },
 
-  // Play Event
-
-  onCustomEvent({ eventId, eventData }) {
-    if (eventId == Constants.BORN_EVENT) {
-      this._newPlayerInfoItem();
-      this._updateList();
-    } else if (eventId === Constants.EAT_EVENT) {
-    } else if (eventId === Constants.KILL_EVENT) {
-    } else if (eventId === Constants.REBORN_EVENT) {
-    } else if (eventId === Constants.PLAYER_LEFT_EVENT) {
-      const playerInfoItem = this._playerInfoItems.pop();
-      this.playerInfoListNode.removeChild(playerInfoItem.node);
-      this._updateList();
-    }
+  /**
+   * 增加玩家
+   */
+  addPlayerInfoItem() {
+    const item = this._newPlayerInfoItem();
+    this._playerInfoItems.push(item);
+    this.updateList();
   },
 
-  onRoomPropertiesChanged({ changedProps }) {
-    const { duration } = changedProps;
-    if (duration) {
-      // 同步计时器
-      this._duration = duration;
-    }
+  /**
+   * 移除玩家
+   */
+  removePlayerInfoItem() {
+    const playerInfoItem = this._playerInfoItems.pop();
+    this.playerInfoListNode.removeChild(playerInfoItem.node);
+    this.updateList();
   },
 
-  onPlayerPropertiesChanged({ player, changedProps }) {
-    cc.log(
-      `ui player ${player.userId} changed props: ${JSON.stringify(
-        changedProps
-      )}`
-    );
-    const { weight } = changedProps;
-    if (weight) {
-      // TODO 更新玩家重量
-      this._updateList();
-    }
-  },
+  _newPlayerInfoItem() {
+    const playerInfoItemNode = cc.instantiate(this.playerInfoItemTemplete);
+    this.playerInfoListNode.addChild(playerInfoItemNode);
+    const playerInfoItem = playerInfoItemNode.getComponent(PlayerInfoItem);
+    return playerInfoItem;
+  }
 
   // LIFE-CYCLE CALLBACKS:
 
   // onLoad () {},
-
-  onDestroy() {
-    const client = getClient();
-  }
 });

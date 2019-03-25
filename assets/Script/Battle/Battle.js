@@ -66,11 +66,6 @@ cc.Class({
 
   initPlayEvent() {
     const client = getClient();
-    client.on(
-      Event.ROOM_CUSTOM_PROPERTIES_CHANGED,
-      this.onRoomPropertiesChanged,
-      this
-    );
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
   },
 
@@ -112,14 +107,6 @@ cc.Class({
 
   // Event
 
-  onRoomPropertiesChanged({ changedProps }) {
-    console.log(`room changed props: ${JSON.stringify(changedProps)}`);
-    const { roomFoods } = changedProps;
-    if (roomFoods) {
-      this.spawnFoodNodes(roomFoods);
-    }
-  },
-
   onCustomEvent({ eventId, eventData }) {
     cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);
     if (eventId == Constants.BORN_EVENT) {
@@ -132,6 +119,8 @@ cc.Class({
       this.onRebornEvent(eventData);
     } else if (eventId == Constants.PLAYER_LEFT_EVENT) {
       this.onPlayerLeftEvent(eventData);
+    } else if (eventId == Constants.SPAWN_FOOD_EVENT) {
+      this.spawnFoodNodes();
     }
   },
 
@@ -145,19 +134,23 @@ cc.Class({
     const player = client.room.getPlayer(playerId);
     if (player.isLocal) {
       // 如果是当前客户端，表示游戏开始
-      this.ui.startTimer();
+      this.ui.initUI();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(p => {
         const ball = this.newBall(p);
         if (p.isLocal) {
           // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
           ball.addComponent(BallController);
+        } else {
+          // 如果是其他客户端，则增加玩家模拟器
+          ball.addComponent(BallSimulator);
         }
       });
     } else {
       // 如果不是当前客户端，表示有其他玩家加入了游戏
       const ball = this.newBall(player);
       ball.addComponent(BallSimulator);
+      this.ui.addPlayerInfoItem();
     }
   },
 
@@ -189,5 +182,6 @@ cc.Class({
     const { playerId } = eventData;
     const ball = this._idToBalls[playerId];
     this.node.removeChild(ball.node);
+    this.ui.removePlayerInfoItem();
   }
 });
