@@ -8,7 +8,7 @@ const BOTTOM = -TOP;
 // 距离最小容忍误差
 const DISTANCE_MAG = 4;
 // 初始生成食物数量
-const INIT_FOOD_COUNT = 200;
+const INIT_FOOD_COUNT = 100;
 // 同步食物时长
 const SYNC_FOOD_DURATION = 200000;
 // 补充食物时长
@@ -19,7 +19,7 @@ const BALL_GROUP = "ball";
 const FOOD_GROUP = "food";
 
 // 游戏时长
-const GAME_DURATION = 10;
+const GAME_DURATION = 600;
 // 游戏时长更新频率
 const SYNC_GAME_DURATION = 10000;
 // 初始尺寸

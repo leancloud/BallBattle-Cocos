@@ -59,13 +59,14 @@ cc.Class({
   /**
    * 游戏中途切换的 master
    */
-  switch() {
+  switch(roomFoods) {
+    this._idToFoods = {};
+    roomFoods.forEach(f => {
+      this._idToFoods[f.id] = f;
+    });
     const client = getClient();
     this._duration = client.room.customProperties.duration;
     this._startUpdateDuration();
-    client.room.setCustomProperties({
-      roomFoods
-    });
     // 生成食物
     this._startSpawnFoods();
   },
@@ -140,16 +141,22 @@ cc.Class({
         client.sendEvent(Constants.GAME_OVER_EVENT);
       }
     };
-    this.schedule(updateDuration, 1);
+    this.schedule(updateDuration, 1, cc.macro.REPEAT_FOREVER, 1);
   },
 
   _startSpawnFoods() {
-    this.schedule(() => {
-      const fIds = Object.keys(this._idToFoods);
-      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
-      cc.log(`spawn: ${spawnFoodCount}`);
-      this._spawnFoodsData(spawnFoodCount);
-    }, Constants.SPAWN_FOOD_DURATION);
+    this.schedule(
+      () => {
+        const fIds = Object.keys(this._idToFoods);
+        const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
+        cc.log(`${Constants.INIT_FOOD_COUNT}, ${fIds.length}`);
+        cc.log(`spawn: ${spawnFoodCount}`);
+        this._spawnFoodsData(spawnFoodCount);
+      },
+      Constants.SPAWN_FOOD_DURATION,
+      cc.macro.REPEAT_FOREVER,
+      1
+    );
   },
 
   // Cocos Events

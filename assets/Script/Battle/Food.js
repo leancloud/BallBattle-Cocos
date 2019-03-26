@@ -9,18 +9,13 @@ cc.Class({
     type: 0
   },
 
-  // LIFE-CYCLE CALLBACKS:
-
-  // onLoad () {},
-
-  start() {},
-
-  // update (dt) {},
-
   getProperties() {
+    const id = this.id;
+    const type = this.type;
     const { x, y } = this.node.position;
     return {
       id,
+      type,
       x,
       y
       // 可能还会有能量值

@@ -97,7 +97,13 @@ cc.Class({
     if (newMaster.isLocal) {
       cc.log("I am the new master");
       const master = this.node.addComponent(Master);
-      master.switch();
+      // 将内存中的食物快照作为房间的食物数据
+      const roomFoods = [];
+      const foods = Object.values(this._idToFoods);
+      foods.forEach(f => {
+        roomFoods.push(f.getProperties());
+      });
+      master.switch(roomFoods);
     }
   },
 
@@ -157,6 +163,7 @@ cc.Class({
     const food = this._idToFoods[fId];
     this.node.removeChild(food.node);
     delete this._idToFoods[fId];
+    this.ui.updateList();
   },
 
   _onKillEvent(eventData) {
@@ -164,6 +171,7 @@ cc.Class({
     // 杀死 Ball，将失败者的 node 设置为不活跃，也许需要等待用户点击复活
     const ball = this._idToBalls[loserId];
     ball.node.active = false;
+    this.ui.updateList();
   },
 
   _onRebornEvent(eventData) {
@@ -171,6 +179,7 @@ cc.Class({
     const ball = this._idToBalls[playerId];
     ball.node.active = true;
     ball.reborn();
+    this.ui.updateList();
   },
 
   _onPlayerLeftEvent(eventData) {
