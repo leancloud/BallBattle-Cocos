@@ -53,7 +53,13 @@ cc.Class({
       // 计算出校正后的方向偏移
       delta = direction.mul(speed * dt);
       // 计算当前新的位置
-      const newPosition = curPos.add(delta);
+      let newPosition = curPos.add(delta);
+      const { x: nx, y: ny } = newPosition;
+      const { LEFT, RIGHT, TOP, BOTTOM } = Constants;
+      newPosition = cc.v2(
+        Math.min(Math.max(nx, LEFT), RIGHT),
+        Math.min(Math.max(ny, BOTTOM), TOP)
+      );
       this.node.position = newPosition;
     }
   }

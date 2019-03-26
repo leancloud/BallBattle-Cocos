@@ -1,12 +1,4 @@
-const {
-  Client,
-  Region,
-  Event,
-  ReceiverGroup,
-  setAdapters,
-  LogLevel,
-  setLogger
-} = Play;
+const { Client } = Play;
 
 let client = null;
 

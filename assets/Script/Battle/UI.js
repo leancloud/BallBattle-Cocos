@@ -1,9 +1,7 @@
 const LeanCloud = require("../LeanCloud");
 const PlayerInfoItem = require("./PlayerInfoItem");
-const Constants = require("../Constants");
 
 const { getClient } = LeanCloud;
-const { Event } = Play;
 
 /**
  * 战斗 UI
