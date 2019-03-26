@@ -144,20 +144,12 @@ cc.Class({
   },
 
   _startSpawnFoods() {
-    cc.log("----------- _startSpawnFoods");
-    this.schedule(
-      () => {
-        cc.log("---------------------------------");
-        const fIds = Object.keys(this._idToFoods);
-        cc.log(`----- ${Constants.INIT_FOOD_COUNT}, ${fIds.length}`);
-        const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
-        cc.log(`spawn: ${spawnFoodCount}`);
-        this._spawnFoodsData(spawnFoodCount);
-      },
-      Constants.SPAWN_FOOD_DURATION,
-      100,
-      1
-    );
+    this.schedule(() => {
+      const fIds = Object.keys(this._idToFoods);
+      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
+      cc.log(`spawn: ${spawnFoodCount}`);
+      this._spawnFoodsData(spawnFoodCount);
+    }, Constants.SPAWN_FOOD_DURATION);
   },
 
   // Cocos Events

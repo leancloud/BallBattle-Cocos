@@ -15,15 +15,19 @@ cc.Class({
   // LIFE-CYCLE CALLBACKS:
 
   onLoad() {
-    cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-    cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+    cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
     this._ball = this.node.getComponent(Ball);
     this._direction = cc.Vec2.ZERO;
   },
 
   onDestroy() {
-    cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-    cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+    cc.systemEvent.off(
+      cc.SystemEvent.EventType.KEY_DOWN,
+      this._onKeyDown,
+      this
+    );
+    cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
   },
 
   start() {
@@ -45,7 +49,7 @@ cc.Class({
     this._cameraNode.position = this.node.position;
   },
 
-  onKeyDown(event) {
+  _onKeyDown(event) {
     this.running = true;
     let dir = this._direction.clone();
     switch (event.keyCode) {
@@ -68,10 +72,10 @@ cc.Class({
       default:
         break;
     }
-    this.synchMove(dir.normalize());
+    this._synchMove(dir.normalize());
   },
 
-  onKeyUp(event) {
+  _onKeyUp(event) {
     let dir = this._direction.clone();
     switch (event.keyCode) {
       case cc.macro.KEY.a:
@@ -89,10 +93,10 @@ cc.Class({
       default:
         break;
     }
-    this.synchMove(dir.normalize());
+    this._synchMove(dir.normalize());
   },
 
-  synchMove(dir) {
+  _synchMove(dir) {
     if (dir.fuzzyEquals(this._direction, 0.01)) {
       return;
     }

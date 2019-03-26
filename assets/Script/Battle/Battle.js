@@ -59,11 +59,7 @@ cc.Class({
     client.resumeMessageQueue();
   },
 
-  startTimer() {
-    this._duration = Constants.GAME_DURATION;
-  },
-
-  newBall(player) {
+  _newBall(player) {
     const ballNode = cc.instantiate(this.ballTemplate);
     const { x, y } = player.customProperties.pos;
     ballNode.position = cc.v2(x, y);
@@ -74,7 +70,7 @@ cc.Class({
     return ball;
   },
 
-  spawnFoodNodes() {
+  _spawnFoodNodes() {
     const client = getClient();
     const { roomFoods } = client.room.customProperties;
     cc.log(`spawn ${roomFoods.length} foods`);
@@ -107,28 +103,28 @@ cc.Class({
 
   onCustomEvent({ eventId, eventData }) {
     if (eventId == Constants.BORN_EVENT) {
-      this.onBornEvent(eventData);
+      this._onBornEvent(eventData);
     } else if (eventId === Constants.EAT_EVENT) {
-      this.onEatEvent(eventData);
+      this._onEatEvent(eventData);
     } else if (eventId === Constants.KILL_EVENT) {
-      this.onKillEvent(eventData);
+      this._onKillEvent(eventData);
     } else if (eventId === Constants.REBORN_EVENT) {
-      this.onRebornEvent(eventData);
+      this._onRebornEvent(eventData);
     } else if (eventId === Constants.PLAYER_LEFT_EVENT) {
-      this.onPlayerLeftEvent(eventData);
+      this._onPlayerLeftEvent(eventData);
     } else if (eventId === Constants.SPAWN_FOOD_EVENT) {
-      this.spawnFoodNodes();
+      this._spawnFoodNodes();
     } else if (eventId === Constants.GAME_OVER_EVENT) {
-      this.onGameOverEvent(eventData);
+      this._onGameOverEvent(eventData);
     }
   },
 
   // Custom Events
 
-  onBornEvent(eventData) {
+  _onBornEvent(eventData) {
     const client = getClient();
     // 初始化战场
-    this.spawnFoodNodes();
+    this._spawnFoodNodes();
     const { playerId } = eventData;
     const player = client.room.getPlayer(playerId);
     if (player.isLocal) {
@@ -136,7 +132,7 @@ cc.Class({
       this.ui.initUI();
       // 初始化已经在房间的玩家
       client.room.playerList.forEach(p => {
-        const ball = this.newBall(p);
+        const ball = this._newBall(p);
         if (p.isLocal) {
           // 如果是当前客户端，则增加玩家控制器，摄像机跟随等
           ball.addComponent(BallController);
@@ -147,13 +143,13 @@ cc.Class({
       });
     } else {
       // 如果不是当前客户端，表示有其他玩家加入了游戏
-      const ball = this.newBall(player);
+      const ball = this._newBall(player);
       ball.addComponent(BallSimulator);
       this.ui.addPlayerInfoItem();
     }
   },
 
-  onEatEvent(eventData) {
+  _onEatEvent(eventData) {
     const { bId, fId } = eventData;
     cc.log(`${bId} eat food: ${fId}`);
     const ball = this._idToBalls[bId];
@@ -163,28 +159,28 @@ cc.Class({
     delete this._idToFoods[fId];
   },
 
-  onKillEvent(eventData) {
+  _onKillEvent(eventData) {
     const { loserId } = eventData;
     // 杀死 Ball，将失败者的 node 设置为不活跃，也许需要等待用户点击复活
     const ball = this._idToBalls[loserId];
     ball.node.active = false;
   },
 
-  onRebornEvent(eventData) {
+  _onRebornEvent(eventData) {
     const { playerId } = eventData;
     const ball = this._idToBalls[playerId];
     ball.node.active = true;
     ball.reborn();
   },
 
-  onPlayerLeftEvent(eventData) {
+  _onPlayerLeftEvent(eventData) {
     const { playerId } = eventData;
     const ball = this._idToBalls[playerId];
     this.node.removeChild(ball.node);
     this.ui.removePlayerInfoItem();
   },
 
-  async onGameOverEvent(eventData) {
+  async _onGameOverEvent(eventData) {
     const client = getClient();
     await client.leaveRoom();
     cc.director.loadScene("menu");

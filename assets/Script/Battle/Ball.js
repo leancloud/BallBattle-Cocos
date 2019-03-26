@@ -39,9 +39,23 @@ cc.Class({
     this.node.position = cc.v2(x, y);
   },
 
-  // LIFE-CYCLE CALLBACKS:
+  getId() {
+    return this.player.actorId;
+  },
 
-  // onLoad () {},
+  getSpeed() {
+    const { speed } = this.player.customProperties;
+    return speed;
+  },
+
+  getWeight() {
+    const collider = this.node.getComponent(cc.CircleCollider);
+    const { radius } = collider;
+    const { scaleX, scaleY } = this.node;
+    return Constants.PI * Math.pow(radius, 2) * scaleX * scaleY;
+  },
+
+  // LIFE-CYCLE CALLBACKS:
 
   start() {
     this.nameLabel.string = this.player.userId;
@@ -56,13 +70,13 @@ cc.Class({
   onCollisionEnter(other, self) {
     const { group: otherGroup } = other.node;
     if (otherGroup === Constants.FOOD_GROUP) {
-      this.onCollideFood(other, self);
+      this._onCollideFood(other, self);
     } else if (otherGroup === Constants.BALL_GROUP) {
-      this.onCollideBall(other, self);
+      this._onCollideBall(other, self);
     }
   },
 
-  onCollideFood(other, self) {
+  _onCollideFood(other, self) {
     // 球碰食物，客户端模拟
     const { node: foodNode } = other;
     const { x, y } = self.node.position;
@@ -81,7 +95,7 @@ cc.Class({
     this.node.dispatchEvent(event);
   },
 
-  onCollideBall(other, self) {
+  _onCollideBall(other, self) {
     const { node: b1Node } = other;
     const { node: b2Node } = self;
     const event = new cc.Event.EventCustom(
@@ -93,21 +107,5 @@ cc.Class({
       b2Node
     };
     this.node.dispatchEvent(event);
-  },
-
-  getId() {
-    return this.player.actorId;
-  },
-
-  getSpeed() {
-    const { speed } = this.player.customProperties;
-    return speed;
-  },
-
-  getWeight() {
-    const collider = this.node.getComponent(cc.CircleCollider);
-    const { radius } = collider;
-    const { scaleX, scaleY } = this.node;
-    return Constants.PI * Math.pow(radius, 2) * scaleX * scaleY;
   }
 });
