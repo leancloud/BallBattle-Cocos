@@ -38,8 +38,7 @@ cc.Class({
 
   init() {
     const client = getClient();
-    const duration = Constants.GAME_DURATION;
-    client.room.setCustomProperties({ duration });
+    this._duration = Constants.GAME_DURATION;
     setInterval(() => {
       this._duration--;
     }, 1000);
@@ -57,8 +56,7 @@ cc.Class({
 
   switch() {
     const client = getClient();
-    let { duration } = client.room.customProperties;
-    client.room.setCustomProperties({ duration });
+    this._duration = client.room.customProperties.duration;
     setInterval(() => {
       this._duration--;
     }, 1000);
@@ -99,7 +97,7 @@ cc.Class({
     const speed = Constants.SPEED_FACTOR / weight;
     // 生成随机位置
     const pos = randomPos();
-    cc.log(`born pos: ${pos}`);
+    cc.log(`born pos: ${pos} at ${this._duration}`);
     player.setCustomProperties({ weight, speed, pos });
     // 通知玩家出生
     const client = getClient();

@@ -19,7 +19,7 @@ const BALL_GROUP = "ball";
 const FOOD_GROUP = "food";
 
 // 游戏时长
-const GAME_DURATION = 120;
+const GAME_DURATION = 600;
 // 游戏时长更新频率
 const SYNC_GAME_DURATION = 10000;
 // 初始尺寸

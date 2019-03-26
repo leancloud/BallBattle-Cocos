@@ -43,8 +43,7 @@ cc.Class({
     });
     this.updateList();
     // 游戏计时
-    this._duration =
-      client.room.customProperties.duration || Constants.GAME_DURATION;
+    this._duration = client.room.customProperties.duration;
     // 更新游戏时间
     setInterval(() => {
       this._duration--;
