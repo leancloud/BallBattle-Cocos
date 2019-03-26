@@ -12,14 +12,14 @@ const INIT_FOOD_COUNT = 200;
 // 同步食物时长
 const SYNC_FOOD_DURATION = 200000;
 // 补充食物时长
-const SPAWN_FOOD_DURATION = 1000000;
+const SPAWN_FOOD_DURATION = 30;
 
 // 节点组
 const BALL_GROUP = "ball";
 const FOOD_GROUP = "food";
 
 // 游戏时长
-const GAME_DURATION = 600;
+const GAME_DURATION = 10;
 // 游戏时长更新频率
 const SYNC_GAME_DURATION = 10000;
 // 初始尺寸
@@ -46,6 +46,8 @@ const PLAYER_LEFT_EVENT = "PLAYER_LEFT_EVENT";
 const REBORN_EVENT = "REBORN_EVENT";
 // 生成食物
 const SPAWN_FOOD_EVENT = "SPAWN_FOOD_EVENT";
+// 游戏结束
+const GAME_OVER_EVENT = "GAME_OVER_EVENT";
 
 // 自定义逻辑事件
 // 球和食物碰撞事件
@@ -83,6 +85,7 @@ module.exports = {
   PLAYER_LEFT_EVENT,
   REBORN_EVENT,
   SPAWN_FOOD_EVENT,
+  GAME_OVER_EVENT,
 
   BALL_AND_FOOD_COLLISION_EVENT,
   BALL_AND_BALL_COLLISION_EVENT

@@ -45,10 +45,10 @@ cc.Class({
     // 游戏计时
     this._duration = client.room.customProperties.duration;
     // 更新游戏时间
-    setInterval(() => {
+    this.schedule(() => {
       this._duration--;
       this.timeLabel.string = `${this._duration}`;
-    }, 1000);
+    }, 1);
   },
 
   /**
@@ -96,9 +96,13 @@ cc.Class({
     this.playerInfoListNode.addChild(playerInfoItemNode);
     const playerInfoItem = playerInfoItemNode.getComponent(PlayerInfoItem);
     return playerInfoItem;
-  }
+  },
 
   // LIFE-CYCLE CALLBACKS:
 
   // onLoad () {},
+
+  onDestroy() {
+    this.unscheduleAllCallbacks();
+  }
 });

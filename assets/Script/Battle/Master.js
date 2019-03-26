@@ -36,59 +36,41 @@ cc.Class({
     );
   },
 
+  onDestroy() {
+    const client = getClient();
+    client.off(Event.PLAYER_ROOM_JOINED, this.onPlayerRoomJoined);
+    client.off(Event.PLAYER_ROOM_LEFT, this.onPlayerRoomLeft);
+    this.unscheduleAllCallbacks();
+  },
+
+  /**
+   * 游戏开始分配的 master
+   */
   init() {
     const client = getClient();
     this._duration = Constants.GAME_DURATION;
-    setInterval(() => {
-      this._duration--;
-    }, 1000);
-    this.spawnFoodsData(Constants.INIT_FOOD_COUNT);
-    // 补充食物
-    setInterval(() => {
-      const fIds = Object.keys(this._idToFoods);
-      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
-      cc.log(`respawn: ${spawnFoodCount}`);
-      this.spawnFoodsData(spawnFoodCount);
-    }, Constants.SPAWN_FOOD_DURATION);
+    this._startUpdateDuration();
+    // 生成食物
+    this._startSpawnFoods();
     // 生成自己的玩家数据
-    this.newPlayer(client.player);
+    this._newPlayer(client.player);
   },
 
+  /**
+   * 游戏中途切换的 master
+   */
   switch() {
     const client = getClient();
     this._duration = client.room.customProperties.duration;
-    setInterval(() => {
-      this._duration--;
-    }, 1000);
-    // 同步食物，保存至服务端的 Room Properties 中
-    setInterval(() => {
-      const foods = Object.values(this._idToFoods);
-      console.log(`current foods count: ${foods.length}`);
-      const roomFoods = [];
-      foods.forEach(f => {
-        const { id, type } = f;
-        const { x, y } = f;
-        roomFoods.push({
-          id,
-          type,
-          x,
-          y
-        });
-      });
-      client.room.setCustomProperties({
-        roomFoods
-      });
-    }, Constants.SYNC_FOOD_DURATION);
-    // 补充食物
-    setInterval(() => {
-      const fIds = Object.keys(this._idToFoods);
-      const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
-      cc.log(`respawn: ${spawnFoodCount}`);
-      this.spawnFoodsData(spawnFoodCount);
-    }, Constants.SPAWN_FOOD_DURATION);
+    this._startUpdateDuration();
+    client.room.setCustomProperties({
+      roomFoods
+    });
+    // 生成食物
+    this._startSpawnFoods();
   },
 
-  newPlayer(player) {
+  _newPlayer(player) {
     cc.log(`new player: ${player.userId}`);
     // 为新玩家生成初始数据
     // 通过面积得到体重
@@ -101,8 +83,22 @@ cc.Class({
     player.setCustomProperties({ weight, speed, pos });
     // 通知玩家出生
     const client = getClient();
+    // 将新的 master 内存中的数据同步到服务端，在有新玩家加入时使用
+    const foods = Object.values(this._idToFoods);
+    console.log(`current foods count: ${foods.length}`);
+    const roomFoods = [];
+    foods.forEach(f => {
+      const { id, type } = f;
+      const { x, y } = f;
+      roomFoods.push({
+        id,
+        type,
+        x,
+        y
+      });
+    });
     // 设置房间时间
-    client.room.setCustomProperties({ duration: this._duration });
+    client.room.setCustomProperties({ duration: this._duration, roomFoods });
     client.sendEvent(Constants.BORN_EVENT, {
       playerId: player.actorId
     });
@@ -112,7 +108,7 @@ cc.Class({
    * 生成食物数据
    * @param {Number} count
    */
-  spawnFoodsData(count) {
+  _spawnFoodsData(count) {
     const client = getClient();
     // 只生成数据
     let { roomFoodId } = client.room.customProperties;
@@ -131,6 +127,37 @@ cc.Class({
       roomFoodId,
       roomFoods
     });
+    client.sendEvent(Constants.SPAWN_FOOD_EVENT);
+  },
+
+  _startUpdateDuration() {
+    const updateDuration = () => {
+      this._duration--;
+      if (this._duration === 0) {
+        this.unschedule(updateDuration);
+        // Game Over
+        const client = getClient();
+        client.sendEvent(Constants.GAME_OVER_EVENT);
+      }
+    };
+    this.schedule(updateDuration, 1);
+  },
+
+  _startSpawnFoods() {
+    cc.log("----------- _startSpawnFoods");
+    this.schedule(
+      () => {
+        cc.log("---------------------------------");
+        const fIds = Object.keys(this._idToFoods);
+        cc.log(`----- ${Constants.INIT_FOOD_COUNT}, ${fIds.length}`);
+        const spawnFoodCount = Constants.INIT_FOOD_COUNT - fIds.length;
+        cc.log(`spawn: ${spawnFoodCount}`);
+        this._spawnFoodsData(spawnFoodCount);
+      },
+      Constants.SPAWN_FOOD_DURATION,
+      100,
+      1
+    );
   },
 
   // Cocos Events
@@ -203,7 +230,7 @@ cc.Class({
     cc.log("new player joined");
     // 生成其他玩家
     cc.log(`${newPlayer.userId} joined room`);
-    this.newPlayer(newPlayer);
+    this._newPlayer(newPlayer);
   },
 
   // 玩家离开房间

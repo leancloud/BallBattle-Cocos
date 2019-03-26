@@ -112,12 +112,14 @@ cc.Class({
       this.onEatEvent(eventData);
     } else if (eventId === Constants.KILL_EVENT) {
       this.onKillEvent(eventData);
-    } else if (eventId == Constants.REBORN_EVENT) {
+    } else if (eventId === Constants.REBORN_EVENT) {
       this.onRebornEvent(eventData);
-    } else if (eventId == Constants.PLAYER_LEFT_EVENT) {
+    } else if (eventId === Constants.PLAYER_LEFT_EVENT) {
       this.onPlayerLeftEvent(eventData);
-    } else if (eventId == Constants.SPAWN_FOOD_EVENT) {
+    } else if (eventId === Constants.SPAWN_FOOD_EVENT) {
       this.spawnFoodNodes();
+    } else if (eventId === Constants.GAME_OVER_EVENT) {
+      this.onGameOverEvent(eventData);
     }
   },
 
@@ -180,5 +182,11 @@ cc.Class({
     const ball = this._idToBalls[playerId];
     this.node.removeChild(ball.node);
     this.ui.removePlayerInfoItem();
+  },
+
+  async onGameOverEvent(eventData) {
+    const client = getClient();
+    await client.leaveRoom();
+    cc.director.loadScene("menu");
   }
 });
