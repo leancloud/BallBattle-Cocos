@@ -44,7 +44,7 @@
 
 - 房间用时
 - 战场的食物列表
-- 食物最大 ID。
+- 食物最大 ID
 
 #### Player Properties
 
