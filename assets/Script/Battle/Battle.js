@@ -8,7 +8,7 @@ const Master = require("./Master");
 const BallController = require("./BallController");
 const BallSimulator = require("./BallSimulator");
 
-const { initClient, getClient } = LeanCloud;
+const { getClient } = LeanCloud;
 const { Event } = Play;
 
 /**
@@ -45,29 +45,18 @@ cc.Class({
     manager.enabled = true;
   },
 
-  async start() {
-    const userId = `${parseInt(Math.random() * 1000000)}`;
-    initClient(userId);
+  start() {
     const client = getClient();
-
-    try {
-      await client.connect();
-      cc.log("connect done");
-      await client.joinOrCreateRoom("leancloud");
-      this.initPlayEvent();
-      if (client.player.isMaster) {
-        const master = this.node.addComponent(Master);
-        master.init();
-      }
-    } catch (err) {
-      cc.log(err);
-    }
-  },
-
-  initPlayEvent() {
-    const client = getClient();
+    cc.log(`client: ${client}`);
     client.on(Event.MASTER_SWITCHED, this.onMasterSwitched, this);
     client.on(Event.CUSTOM_EVENT, this.onCustomEvent, this);
+    cc.log(`register: ${Event.MASTER_SWITCHED}, ${Event.CUSTOM_EVENT}`);
+    if (client.player.isMaster) {
+      const master = this.node.addComponent(Master);
+      master.init();
+    }
+    cc.log("resume message queue");
+    client.resumeMessageQueue();
   },
 
   startTimer() {
@@ -117,7 +106,6 @@ cc.Class({
   },
 
   onCustomEvent({ eventId, eventData }) {
-    cc.log(`recv: ${eventId}, ${JSON.stringify(eventData)}`);
     if (eventId == Constants.BORN_EVENT) {
       this.onBornEvent(eventData);
     } else if (eventId === Constants.EAT_EVENT) {

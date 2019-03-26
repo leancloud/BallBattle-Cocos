@@ -25162,6 +25162,7 @@
 
 	    msg) {var
 	      eventId = msg.eventId,eventData = msg.msg,senderId = msg.fromActorId;
+	      debug('handle msg: ' + eventId);
 	      this.emit(SEND_CUSTOM_EVENT, eventId, eventData, senderId);
 	    } }, { key: '_handleKickedMsg', value: function _handleKickedMsg(
 
@@ -25663,6 +25664,7 @@
 
 	        });
 	        this._gameConn.on(SEND_CUSTOM_EVENT, function (eventId, eventData, senderId) {
+	          debug('game recv: ' + eventId);
 	          _this4._play.emit(Event.CUSTOM_EVENT, {
 	            eventId: eventId,
 	            eventData: eventData,
@@ -25800,7 +25802,7 @@
 	      },
 
 	      resumeMessageQueue: function resumeMessageQueue() {
-	        this._gameConn._pauseMessageQueue();
+	        this._gameConn._resumeMessageQueue();
 	      },
 
 	      _simulateDisconnection: function _simulateDisconnection() {
