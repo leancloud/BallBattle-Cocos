@@ -80,20 +80,20 @@
 ├── Prefabs 预制目录，主要存放球，食物预制体
 ├── Scene 场景目录，主菜单场景，战斗场景
 ├── Script 脚本目录
-│ ├── Battle 战斗相关脚本目录
-│ ├── Ball.js 球节点控制脚本
-│ ├── BallController.js 玩家控制球脚本，生成移动数据同步给其他客户端
-│ ├── BallSimulator.js 玩家运动模拟脚本，根据玩家运动数据，模拟运动行为
-│ ├── Battle.js 战场节点总控制器，用于接收并解析战斗中的自定义事件，驱动场景节点及 UI 节点变化
-│ ├── BattleHelper.js 战场工具脚本
-│ ├── Food.js 食物节点控制脚本
-│ ├── Master.js 游戏逻辑脚本，用于区分 Master 客户端与普通客户端，Master 组件用于生成房间数据及逻辑判断，只有 Master 的客户端才拥有这个组件，包括最初的房间的创建者和切换后的新房主。
-│ ├── PlayerInfoItem.js 玩家信息 UI 节点控制脚本
-│ ├── UI.js UI 控制脚本
-│ ├── Menu 主菜单相关脚本目录
-│ ├── Menu.js 主菜单脚本
-│ ├── Constants.js 游戏中用到的常量
-│ ├── LeanCloud.js 全局存放 LeanCloud SDK 对象的脚本
+│   ├── Battle 战斗相关脚本目录
+│   │    ├── Ball.js 球节点控制脚本
+│   │    ├── BallController.js 玩家控制球脚本，生成移动数据同步给其他客户端
+│   │    ├── BallSimulator.js 玩家运动模拟脚本，根据玩家运动数据，模拟运动行为
+│   │    ├── Battle.js 战场节点总控制器，用于接收并解析战斗中的自定义事件，驱动场景节点及 UI 节点变化
+│   │    ├── BattleHelper.js 战场工具脚本
+│   │    ├── Food.js 食物节点控制脚本
+│   │    ├── Master.js 游戏逻辑脚本，用于区分 Master 客户端与普通客户端，Master 组件用于生成房间数据及逻辑判断，只有 Master 的客户端才拥有这个组件，包括最初的房间的创建者和切换后的新房主。
+│   │    ├── PlayerInfoItem.js 玩家信息 UI 节点控制脚本
+│   │    └── UI.js UI 控制脚本
+│   ├── Menu主菜单相关脚本目录
+│   │    └── Menu.js 主菜单脚本
+│   ├── Constants.js 游戏中用到的常量
+│   └── LeanCloud.js 全局存放 LeanCloud SDK 对象的脚本
 ├── Texture 素材资源目录
 └── play.js LeanCloud 实时对战服务 SDK
 ```
