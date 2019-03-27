@@ -75,6 +75,7 @@
 
 ## 项目结构
 
+```
 ├── Animation 动画目录
 ├── Prefabs 预制目录，主要存放球，食物预制体
 ├── Scene 场景目录，主菜单场景，战斗场景
@@ -95,3 +96,4 @@
 │ ├── LeanCloud.js 全局存放 LeanCloud SDK 对象的脚本
 ├── Texture 素材资源目录
 └── play.js LeanCloud 实时对战服务 SDK
+```
