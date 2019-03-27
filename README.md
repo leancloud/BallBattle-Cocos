@@ -6,6 +6,8 @@
 
 这个工程是使用 [LeanCloud 实时对战服务](https://leancloud.cn/docs/multiplayer.html) + Cocos Creator 开发的模拟《球球大作战》demo。
 
+[线上体验](http://ballbattle.leanapp.cn)
+
 ## 玩法
 
 输入房间 ID，加入房间（如果没有此房间，则创建）。
