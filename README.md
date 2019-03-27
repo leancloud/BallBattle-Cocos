@@ -18,6 +18,7 @@
 ### 匹配对战
 
 最基础的房间 ID 匹配。
+
 [更多关于房间匹配文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash786861961)
 
 ### 属性同步与保存
