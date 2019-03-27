@@ -17,32 +17,32 @@
 
 ### 匹配对战
 
-最基础的房间 ID 匹配。[更多关于房间匹配文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash786861961)
+最基础的房间 ID 匹配。
+[更多关于房间匹配文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash786861961)
 
 ### 属性同步与保存
 
-[更多关于属性同步文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash-299183039)
 这个 demo 使用的是 Master Client 机制，但由于 Master Client 可能存在掉线等异常情况，所以需要将房间和玩家的部分数据保存至 Room Properties 和 Player Properties。
 
-#### 房间属性
+[更多关于属性同步文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash-299183039)
 
-[更多关于房间属性文档]((https://leancloud.cn/docs/multiplayer-guide-js.html#hash1532570669))
+#### 房间属性
 
 - 房间用时
 - 战场的食物列表
 - 食物最大 ID
 
-#### 玩家属性
+[更多关于房间属性文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash1532570669)
 
-[更多关于玩家属性文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash700221845)
+#### 玩家属性
 
 - 位置
 - 体重
 - 速度
 
-### 自定义事件
+[更多关于玩家属性文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash700221845)
 
-[更多关于自定义事件文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash1368192228)
+### 自定义事件
 
 - 玩家出生：对于当前玩家，执行战场初始化逻辑；对于其他玩家，执行增加玩家逻辑。
 - 吃食物：客户端移除内存中的食物节点，同步玩家体重。
@@ -51,6 +51,8 @@
 - 生成食物：同步房间内的食物数据。
 - 玩家离开：用于移除场景和 UI 对应节点。
 - 游戏结束：用于返回主菜单场景。
+
+[更多关于自定义事件文档](https://leancloud.cn/docs/multiplayer-guide-js.html#hash1368192228)
 
 ### 其他功能
 
