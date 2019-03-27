@@ -44,8 +44,8 @@ cc.Class({
     this._duration = client.room.customProperties.duration;
     // 更新游戏时间
     this.schedule(() => {
-      this._duration--;
-      this.timeLabel.string = `${this._duration}`;
+      this._duration++;
+      this.timeLabel.string = `${this._duration}s`;
     }, 1);
   },
 

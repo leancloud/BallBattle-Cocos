@@ -48,7 +48,8 @@ cc.Class({
    */
   init() {
     const client = getClient();
-    this._duration = Constants.GAME_DURATION;
+    this._duration = 0;
+    cc.log(`init duration: ${this._duration}`);
     this._startUpdateDuration();
     // 生成食物
     this._startSpawnFoods();
@@ -133,13 +134,13 @@ cc.Class({
 
   _startUpdateDuration() {
     const updateDuration = () => {
-      this._duration--;
-      if (this._duration === 0) {
-        this.unschedule(updateDuration);
-        // Game Over
-        const client = getClient();
-        client.sendEvent(Constants.GAME_OVER_EVENT);
-      }
+      this._duration++;
+      // if (this._duration === 0) {
+      //   this.unschedule(updateDuration);
+      //   // Game Over
+      //   const client = getClient();
+      //   client.sendEvent(Constants.GAME_OVER_EVENT);
+      // }
     };
     this.schedule(updateDuration, 1, cc.macro.REPEAT_FOREVER, 1);
   },
