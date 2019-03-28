@@ -19,9 +19,17 @@ cc.Class({
     }
   },
 
-  setInfo(rank, name, weight) {
+  setInfo(rank, player) {
+    let color = cc.Color.WHITE;
+    if (player.isLocal) {
+      color = cc.Color.YELLOW;
+    }
+    this.rankLabel.node.color = color;
+    this.nameLabel.node.color = color;
+    this.weightLabel.node.color = color;
     this.rankLabel.string = `${rank}`;
-    this.nameLabel.string = `${name}`;
+    this.nameLabel.string = `${player.userId}`;
+    const { weight } = player.customProperties;
     this.weightLabel.string = this.toReadableWeight(weight);
   },
 

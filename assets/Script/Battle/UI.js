@@ -63,8 +63,7 @@ cc.Class({
     for (let i = 0; i < sortedPlayerList.length; i++) {
       const player = sortedPlayerList[i];
       const playerInfoItem = this._playerInfoItems[i];
-      const { weight } = player.customProperties;
-      playerInfoItem.setInfo(i + 1, player.userId, weight);
+      playerInfoItem.setInfo(i + 1, player);
     }
     // 更新自身重量
     const { weight: myWeight } = client.player.customProperties;
