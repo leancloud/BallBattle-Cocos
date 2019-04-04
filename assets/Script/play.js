@@ -1,8 +1,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory(global.Play = {}));
-}(this, function (exports) { 'use strict';
+	(factory((global.Play = {})));
+}(this, (function (exports) { 'use strict';
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -484,8 +484,6 @@
 	    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
 	      // Set @@toStringTag to native iterators
 	      _setToStringTag(IteratorPrototype, TAG, true);
-	      // fix for some old engines
-	      if (!_library && typeof IteratorPrototype[ITERATOR] != 'function') _hide(IteratorPrototype, ITERATOR, returnThis);
 	    }
 	  }
 	  // fix Array#{values, @@iterator}.name in V8 / FF
@@ -494,7 +492,7 @@
 	    $default = function values() { return $native.call(this); };
 	  }
 	  // Define iterator
-	  if ((!_library || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+	  if ((FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
 	    _hide(proto, ITERATOR, $default);
 	  }
 	  // Plug for library
@@ -2341,7 +2339,7 @@
 	    return capability.promise;
 	  }
 	});
-	_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
+	_export(_export.S + _export.F * (_library), PROMISE, {
 	  // 25.4.4.6 Promise.resolve(x)
 	  resolve: function resolve(x) {
 	    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
@@ -3302,22 +3300,6 @@
 	  typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
 	  typedArrayTags[setTag] = typedArrayTags[stringTag] =
 	  typedArrayTags[weakMapTag] = false;
-
-	  /** Used to identify `toStringTag` values supported by `_.clone`. */
-	  var cloneableTags = {};
-	  cloneableTags[argsTag] = cloneableTags[arrayTag] =
-	  cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
-	  cloneableTags[boolTag] = cloneableTags[dateTag] =
-	  cloneableTags[float32Tag] = cloneableTags[float64Tag] =
-	  cloneableTags[int8Tag] = cloneableTags[int16Tag] =
-	  cloneableTags[int32Tag] = cloneableTags[mapTag] =
-	  cloneableTags[numberTag] = cloneableTags[objectTag] =
-	  cloneableTags[regexpTag] = cloneableTags[setTag] =
-	  cloneableTags[stringTag] = cloneableTags[symbolTag] =
-	  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
-	  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
-	  cloneableTags[errorTag] = cloneableTags[funcTag] =
-	  cloneableTags[weakMapTag] = false;
 
 	  /** Used to map Latin Unicode letters to basic Latin letters. */
 	  var deburredLetters = {
@@ -5650,7 +5632,7 @@
 	              : copySymbols(value, baseAssign(result, value));
 	          }
 	        } else {
-	          if (!cloneableTags[tag]) {
+	          {
 	            return object ? value : {};
 	          }
 	          result = initCloneByTag(value, tag, isDeep);
@@ -8990,11 +8972,10 @@
 
 	      try {
 	        value[symToStringTag] = undefined;
-	        var unmasked = true;
 	      } catch (e) {}
 
 	      var result = nativeObjectToString.call(value);
-	      if (unmasked) {
+	      {
 	        if (isOwn) {
 	          value[symToStringTag] = tag;
 	        } else {
@@ -23571,7 +23552,7 @@
 	});
 	var client_1 = client.Request;
 
-	var version = "0.18.0-beta.0";
+	var version = "0.18.0-beta.1";
 	var protocolVersion = 0;
 
 	// SDK 版本号
@@ -25162,7 +25143,6 @@
 
 	    msg) {var
 	      eventId = msg.eventId,eventData = msg.msg,senderId = msg.fromActorId;
-	      debug('handle msg: ' + eventId);
 	      this.emit(SEND_CUSTOM_EVENT, eventId, eventData, senderId);
 	    } }, { key: '_handleKickedMsg', value: function _handleKickedMsg(
 
@@ -25664,7 +25644,6 @@
 
 	        });
 	        this._gameConn.on(SEND_CUSTOM_EVENT, function (eventId, eventData, senderId) {
-	          debug('game recv: ' + eventId);
 	          _this4._play.emit(Event.CUSTOM_EVENT, {
 	            eventId: eventId,
 	            eventData: eventData,
@@ -26595,5 +26574,5 @@
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=play.js.map

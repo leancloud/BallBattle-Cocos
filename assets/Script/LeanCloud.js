@@ -1,4 +1,12 @@
-const { Client } = Play;
+let PlaySDK;
+
+if (cc.sys.WECHAT_GAME == cc.sys.platform) {
+  PlaySDK = require("./play");
+} else {
+  PlaySDK = Play;
+}
+
+const { Client } = PlaySDK;
 
 let client = null;
 
@@ -16,5 +24,6 @@ function getClient() {
 
 module.exports = {
   initClient,
-  getClient
+  getClient,
+  Play: PlaySDK
 };

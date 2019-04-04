@@ -2,7 +2,7 @@ const LeanCloud = require("../LeanCloud");
 const Constants = require("../Constants");
 const { randomPos } = require("./BattleHelper");
 
-const { getClient } = LeanCloud;
+const { getClient, Play } = LeanCloud;
 const { Event } = Play;
 
 /**

@@ -8,7 +8,7 @@ const Master = require("./Master");
 const BallController = require("./BallController");
 const BallSimulator = require("./BallSimulator");
 
-const { getClient } = LeanCloud;
+const { getClient, Play } = LeanCloud;
 const { Event } = Play;
 
 /**
@@ -189,9 +189,10 @@ cc.Class({
     this.ui.removePlayerInfoItem();
   },
 
-  async _onGameOverEvent(eventData) {
+  _onGameOverEvent(eventData) {
     const client = getClient();
-    await client.leaveRoom();
-    cc.director.loadScene("menu");
+    client.leaveRoom().then(() => {
+      cc.director.loadScene("menu");
+    });
   }
 });
